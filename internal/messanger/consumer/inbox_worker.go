@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/umisto/kafkakit/box"
 	"github.com/umisto/logium"
-	"github.com/umisto/profiles-svc/internal/domain/entity"
-	"github.com/umisto/profiles-svc/internal/events/contracts"
+	"github.com/umisto/profiles-svc/internal/domain/models"
+	"github.com/umisto/profiles-svc/internal/messanger/contracts"
 )
 
 type InboxWorker struct {
@@ -47,8 +47,8 @@ type inbox interface {
 }
 
 type domain interface {
-	CreateProfile(ctx context.Context, userID uuid.UUID, username string) (entity.Profile, error)
-	UpdateProfileUsername(ctx context.Context, accountID uuid.UUID, username string) (entity.Profile, error)
+	CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error)
+	UpdateProfileUsername(ctx context.Context, accountID uuid.UUID, username string) (models.Profile, error)
 }
 
 func NewInboxWorker(

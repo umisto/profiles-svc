@@ -1,4 +1,4 @@
-package entity
+package models
 
 import (
 	"time"
@@ -20,11 +20,4 @@ type Profile struct {
 
 func (e Profile) IsNil() bool {
 	return e.AccountID == uuid.Nil
-}
-
-type ProfileCollection struct {
-	Data  []Profile `json:"data"`
-	Page  uint      `json:"page"`
-	Size  uint      `json:"size"`
-	Total uint      `json:"total"`
 }

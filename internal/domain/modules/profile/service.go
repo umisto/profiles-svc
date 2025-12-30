@@ -4,36 +4,44 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/umisto/profiles-svc/internal/domain/entity"
+	"github.com/umisto/pagi"
+	"github.com/umisto/profiles-svc/internal/domain/models"
 )
 
 type Service struct {
-	db database
+	repo      repo
+	messanger messanger
 }
 
-func New(db database) Service {
+func New(db repo, messanger messanger) Service {
 	return Service{
-		db: db,
+		repo:      db,
+		messanger: messanger,
 	}
 }
 
-type database interface {
-	CreateProfile(ctx context.Context, userID uuid.UUID, username string) (entity.Profile, error)
+type repo interface {
+	CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error)
 
-	GetProfileByAccountID(ctx context.Context, userID uuid.UUID) (entity.Profile, error)
-	GetProfileByUsername(ctx context.Context, username string) (entity.Profile, error)
+	GetProfileByAccountID(ctx context.Context, userID uuid.UUID) (models.Profile, error)
+	GetProfileByUsername(ctx context.Context, username string) (models.Profile, error)
 
-	UpdateProfile(ctx context.Context, userID uuid.UUID, params UpdateParams) (entity.Profile, error)
+	UpdateProfile(ctx context.Context, userID uuid.UUID, params UpdateParams) (models.Profile, error)
 
-	UpdateProfileUsername(ctx context.Context, userID uuid.UUID, username string) (entity.Profile, error)
-	UpdateProfileOfficial(ctx context.Context, userID uuid.UUID, official bool) (entity.Profile, error)
+	UpdateProfileUsername(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error)
+	UpdateProfileOfficial(ctx context.Context, userID uuid.UUID, official bool) (models.Profile, error)
 
 	DeleteProfile(ctx context.Context, userID uuid.UUID) error
 
 	FilterProfiles(
 		ctx context.Context,
 		params FilterParams,
-		offset uint,
-		limit uint,
-	) (entity.ProfileCollection, error)
+		limit, offset uint,
+	) (pagi.Page[[]models.Profile], error)
+
+	Transaction(ctx context.Context, fn func(ctx context.Context) error) error
+}
+
+type messanger interface {
+	WriteProfileUpdated(ctx context.Context, profile models.Profile) error
 }

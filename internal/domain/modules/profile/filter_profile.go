@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/umisto/profiles-svc/internal/domain/entity"
+	"github.com/umisto/pagi"
 	"github.com/umisto/profiles-svc/internal/domain/errx"
+	"github.com/umisto/profiles-svc/internal/domain/models"
 )
 
 type FilterParams struct {
@@ -14,10 +15,14 @@ type FilterParams struct {
 	Verified        *bool
 }
 
-func (s Service) FilterProfile(ctx context.Context, params FilterParams, offset, limit int32) (entity.ProfileCollection, error) {
-	collection, err := s.db.FilterProfiles(ctx, params, uint(offset), uint(limit))
+func (s Service) FilterProfile(
+	ctx context.Context,
+	params FilterParams,
+	limit, offset uint,
+) (pagi.Page[[]models.Profile], error) {
+	collection, err := s.repo.FilterProfiles(ctx, params, limit, offset)
 	if err != nil {
-		return entity.ProfileCollection{}, errx.ErrorInternal.Raise(
+		return pagi.Page[[]models.Profile]{}, errx.ErrorInternal.Raise(
 			fmt.Errorf("getting profile with username '%s': %w", *params.UsernamePrefix, err),
 		)
 	}

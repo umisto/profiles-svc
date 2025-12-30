@@ -1,11 +1,12 @@
 package responses
 
 import (
-	"github.com/umisto/profiles-svc/internal/domain/entity"
+	"github.com/umisto/pagi"
+	"github.com/umisto/profiles-svc/internal/domain/models"
 	"github.com/umisto/profiles-svc/resources"
 )
 
-func Profile(m entity.Profile) resources.Profile {
+func Profile(m models.Profile) resources.Profile {
 	resp := resources.Profile{
 		Data: resources.ProfileData{
 			Id:   m.AccountID,
@@ -25,7 +26,7 @@ func Profile(m entity.Profile) resources.Profile {
 	return resp
 }
 
-func ProfileCollection(m entity.ProfileCollection) resources.ProfilesCollection {
+func ProfileCollection(m pagi.Page[[]models.Profile]) resources.ProfilesCollection {
 	resp := resources.ProfilesCollection{
 		Data: make([]resources.ProfileData, 0, len(m.Data)),
 	}

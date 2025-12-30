@@ -6,14 +6,14 @@ import (
 
 	"github.com/umisto/ape"
 	"github.com/umisto/ape/problems"
+	"github.com/umisto/pagi"
 	"github.com/umisto/profiles-svc/internal/domain/modules/profile"
 	"github.com/umisto/profiles-svc/internal/rest/responses"
-	"github.com/umisto/restkit/pagi"
 )
 
 func (s Service) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
-	pag, size := pagi.GetPagination(r)
+	limit, offset := pagi.GetPagination(r)
 
 	filters := profile.FilterParams{}
 
@@ -25,7 +25,7 @@ func (s Service) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 		filters.PseudonymPrefix = &pseudonym
 	}
 
-	res, err := s.domain.FilterProfile(r.Context(), filters, pag, size)
+	res, err := s.domain.FilterProfile(r.Context(), filters, limit, offset)
 	if err != nil {
 		s.log.WithError(err).Error("failed to filter profiles")
 		ape.RenderErr(w, problems.InternalError())

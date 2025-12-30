@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 )
 
+const AccountsTopicV1 = "accounts.v1"
+
 const AccountCreatedEvent = "account.created"
 
 type AccountCreatedPayload struct {

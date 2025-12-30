@@ -6,7 +6,7 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/umisto/kafkakit/subscriber"
 	"github.com/umisto/logium"
-	"github.com/umisto/profiles-svc/internal/events/contracts"
+	"github.com/umisto/profiles-svc/internal/messanger/contracts"
 )
 
 type Service struct {

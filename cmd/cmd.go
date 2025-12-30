@@ -9,9 +9,10 @@ import (
 	"github.com/umisto/logium"
 	"github.com/umisto/profiles-svc/internal"
 	"github.com/umisto/profiles-svc/internal/domain/modules/profile"
-	"github.com/umisto/profiles-svc/internal/events/consumer"
-	"github.com/umisto/profiles-svc/internal/events/consumer/callback"
-	"github.com/umisto/profiles-svc/internal/repo"
+	"github.com/umisto/profiles-svc/internal/messanger/consumer"
+	"github.com/umisto/profiles-svc/internal/messanger/consumer/callback"
+	"github.com/umisto/profiles-svc/internal/messanger/producer"
+	"github.com/umisto/profiles-svc/internal/repository"
 	"github.com/umisto/profiles-svc/internal/rest/middlewares"
 
 	"github.com/umisto/profiles-svc/internal/rest"
@@ -32,10 +33,12 @@ func StartServices(ctx context.Context, cfg internal.Config, log logium.Logger, 
 		log.Fatal("failed to connect to database", "error", err)
 	}
 
-	database := repo.New(pg)
+	repo := repository.New(pg)
 	kafkaBox := box.New(pg)
 
-	profileSvc := profile.New(database)
+	kafkaProducer := producer.New(log, cfg.Kafka.Brokers, kafkaBox)
+
+	profileSvc := profile.New(repo, kafkaProducer)
 
 	ctrl := controller.New(log, profileSvc)
 	mdlv := middlewares.New(log)

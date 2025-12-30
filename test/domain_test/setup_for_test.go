@@ -7,7 +7,7 @@ import (
 
 	"github.com/umisto/profiles-svc/internal"
 	domain2 "github.com/umisto/profiles-svc/internal/domain/modules/profile"
-	"github.com/umisto/profiles-svc/internal/repo"
+	"github.com/umisto/profiles-svc/internal/repository"
 )
 
 // TEST DATABASE CONNECTION
@@ -45,7 +45,7 @@ func newSetup(t *testing.T) (Setup, error) {
 		log.Fatal("failed to connect to database", "error", err)
 	}
 
-	database := repo.NewDatabase(pg)
+	database := repository.NewDatabase(pg)
 
 	profileSvc := domain2.New(database)
 

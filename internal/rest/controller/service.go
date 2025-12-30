@@ -5,21 +5,26 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/umisto/logium"
-	"github.com/umisto/profiles-svc/internal/domain/entity"
+	"github.com/umisto/pagi"
+	"github.com/umisto/profiles-svc/internal/domain/models"
 	"github.com/umisto/profiles-svc/internal/domain/modules/profile"
 )
 
 type Domain interface {
-	CreateProfile(ctx context.Context, userID uuid.UUID, username string) (entity.Profile, error)
+	CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error)
 
-	FilterProfile(ctx context.Context, params profile.FilterParams, offset, limit int32) (entity.ProfileCollection, error)
+	FilterProfile(
+		ctx context.Context,
+		params profile.FilterParams,
+		limit, offset uint,
+	) (pagi.Page[[]models.Profile], error)
 
-	GetProfileByID(ctx context.Context, userID uuid.UUID) (entity.Profile, error)
-	GetProfileByUsername(ctx context.Context, username string) (entity.Profile, error)
+	GetProfileByID(ctx context.Context, userID uuid.UUID) (models.Profile, error)
+	GetProfileByUsername(ctx context.Context, username string) (models.Profile, error)
 
-	UpdateProfile(ctx context.Context, accountID uuid.UUID, input profile.UpdateParams) (entity.Profile, error)
-	UpdateProfileOfficial(ctx context.Context, accountID uuid.UUID, official bool) (entity.Profile, error)
-	UpdateProfileUsername(ctx context.Context, accountID uuid.UUID, username string) (entity.Profile, error)
+	UpdateProfile(ctx context.Context, accountID uuid.UUID, input profile.UpdateParams) (models.Profile, error)
+	UpdateProfileOfficial(ctx context.Context, accountID uuid.UUID, official bool) (models.Profile, error)
+	UpdateProfileUsername(ctx context.Context, accountID uuid.UUID, username string) (models.Profile, error)
 }
 
 type Service struct {

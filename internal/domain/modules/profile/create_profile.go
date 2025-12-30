@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/umisto/profiles-svc/internal/domain/entity"
 	"github.com/umisto/profiles-svc/internal/domain/errx"
+	"github.com/umisto/profiles-svc/internal/domain/models"
 )
 
-func (s Service) CreateProfile(ctx context.Context, userID uuid.UUID, username string) (entity.Profile, error) {
-	profile, err := s.db.CreateProfile(ctx, userID, username)
+func (s Service) CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error) {
+	profile, err := s.repo.CreateProfile(ctx, userID, username)
 	if err != nil {
-		return entity.Profile{}, errx.ErrorInternal.Raise(
+		return models.Profile{}, errx.ErrorInternal.Raise(
 			fmt.Errorf("creating profile for user '%s': %w", userID, err),
 		)
 	}
