@@ -83,11 +83,11 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [PaginationData](docs/PaginationData.md)
  - [Profile](docs/Profile.md)
  - [ProfileAttributes](docs/ProfileAttributes.md)
  - [ProfileData](docs/ProfileData.md)
  - [ProfilesCollection](docs/ProfilesCollection.md)
- - [ProfilesCollectionLinks](docs/ProfilesCollectionLinks.md)
  - [UpdateOfficial](docs/UpdateOfficial.md)
  - [UpdateOfficialData](docs/UpdateOfficialData.md)
  - [UpdateOfficialDataAttributes](docs/UpdateOfficialDataAttributes.md)

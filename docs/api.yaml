@@ -32,3 +32,5 @@ components:
     ProfilesCollection:
       $ref: './spec/components/schemas/ProfilesCollection.yaml'
 
+    PaginationData:
+      $ref: './spec/components/schemas/PaginationData.yaml'

@@ -5,11 +5,11 @@ api/openapi.yaml
 api_test_.go
 client.go
 configuration.go
+docs/PaginationData.md
 docs/Profile.md
 docs/ProfileAttributes.md
 docs/ProfileData.md
 docs/ProfilesCollection.md
-docs/ProfilesCollectionLinks.md
 docs/TestAPI.md
 docs/UpdateOfficial.md
 docs/UpdateOfficialData.md
@@ -20,11 +20,11 @@ docs/UpdateProfileDataAttributes.md
 git_push.sh
 go.mod
 go.sum
+model_pagination_data.go
 model_profile.go
 model_profile_attributes.go
 model_profile_data.go
 model_profiles_collection.go
-model_profiles_collection_links.go
 model_update_official.go
 model_update_official_data.go
 model_update_official_data_attributes.go

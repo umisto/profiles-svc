@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/google/uuid"
+	"github.com/netbill/kafkakit/header"
 	"github.com/netbill/profiles-svc/internal/core/models"
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
 	"github.com/segmentio/kafka-go"
@@ -24,15 +25,15 @@ func (p Producer) WriteProfileUpdated(
 	_, err = p.outbox.CreateOutboxEvent(
 		ctx,
 		kafka.Message{
-			Topic: contracts.ProfileUpdatedEvent,
+			Topic: contracts.ProfilesTopicV1,
 			Key:   []byte(profile.AccountID.String()),
 			Value: payload,
 			Headers: []kafka.Header{
-				{Key: "EventID", Value: []byte(uuid.New().String())}, // Outbox will fill this
-				{Key: "EventType", Value: []byte(contracts.ProfileUpdatedEvent)},
-				{Key: "EventVersion", Value: []byte("1")},
-				{Key: "Producer", Value: []byte(contracts.ProfilesSvcGroup)},
-				{Key: "ContentType", Value: []byte("application/json")},
+				{Key: header.EventID, Value: []byte(uuid.New().String())}, // Outbox will fill this
+				{Key: header.EventType, Value: []byte(contracts.ProfileUpdatedEvent)},
+				{Key: header.EventVersion, Value: []byte("1")},
+				{Key: header.Producer, Value: []byte(contracts.ProfilesSvcGroup)},
+				{Key: header.ContentType, Value: []byte("application/json")},
 			},
 		},
 	)

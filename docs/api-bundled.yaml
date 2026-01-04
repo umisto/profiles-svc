@@ -33,7 +33,7 @@ components:
             type:
               type: string
               enum:
-                - profile
+                - update_profile
             attributes:
               type: object
               properties:
@@ -66,7 +66,7 @@ components:
             type:
               type: string
               enum:
-                - profile
+                - update_profile_official
             attributes:
               type: object
               required:
@@ -142,24 +142,29 @@ components:
           items:
             $ref: '#/components/schemas/ProfileData'
         links:
-          type: object
-          required:
-            - page_number
-            - page_size
-            - total_items
-          properties:
-            page_number:
-              type: integer
-              format: int64
-              description: The current page number.
-              example: 1
-            page_size:
-              type: integer
-              format: int64
-              description: The number of items per page.
-              example: 10
-            total_items:
-              type: integer
-              format: int64
-              description: The total number of items available.
-              example: 100
+          $ref: '#/components/schemas/PaginationData'
+    PaginationData:
+      type: object
+      required:
+        - self
+      properties:
+        self:
+          type: string
+          format: uri
+          description: link to the current page
+        first:
+          type: string
+          format: uri
+          description: link to the first page
+        last:
+          type: string
+          format: uri
+          description: link to the last page
+        prev:
+          type: string
+          format: uri
+          description: link to the previous page
+        next:
+          type: string
+          format: uri
+          description: link to the next page

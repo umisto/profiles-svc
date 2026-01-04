@@ -13,6 +13,7 @@ import (
 )
 
 const profilesTable = "profiles"
+const ProfilesColumns = "account_id, username, official, pseudonym, description, avatar, created_at, updated_at"
 
 type Profile struct {
 	AccountID   uuid.UUID `db:"account_id"`
@@ -55,7 +56,7 @@ func NewProfilesQ(db pgx.DBTX) ProfilesQ {
 	builder := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	return ProfilesQ{
 		db:       db,
-		selector: builder.Select("*").From(profilesTable),
+		selector: builder.Select(ProfilesColumns).From(profilesTable),
 		inserter: builder.Insert(profilesTable),
 		updater:  builder.Update(profilesTable),
 		deleter:  builder.Delete(profilesTable),
@@ -63,7 +64,16 @@ func NewProfilesQ(db pgx.DBTX) ProfilesQ {
 	}
 }
 
-func (q ProfilesQ) Insert(ctx context.Context, input Profile) (Profile, error) {
+type InsertProfileParams struct {
+	AccountID   uuid.UUID
+	Username    string
+	Official    bool
+	Pseudonym   *string
+	Description *string
+	Avatar      *string
+}
+
+func (q ProfilesQ) Insert(ctx context.Context, input InsertProfileParams) (Profile, error) {
 	values := map[string]interface{}{
 		"account_id":  input.AccountID,
 		"username":    input.Username,
@@ -71,8 +81,6 @@ func (q ProfilesQ) Insert(ctx context.Context, input Profile) (Profile, error) {
 		"pseudonym":   input.Pseudonym,
 		"description": input.Description,
 		"avatar":      input.Avatar,
-		"created_at":  input.CreatedAt,
-		"updated_at":  input.UpdatedAt,
 	}
 
 	query, args, err := q.inserter.
@@ -97,47 +105,52 @@ func (q ProfilesQ) Insert(ctx context.Context, input Profile) (Profile, error) {
 	return p, nil
 }
 
-func (q ProfilesQ) Update(ctx context.Context) ([]Profile, error) {
-	q.updater = q.updater.Set("updated_at", time.Now().UTC())
-
-	query, args, err := q.updater.
-		Suffix("RETURNING account_id, username, official, pseudonym, description, avatar, created_at, updated_at").
-		ToSql()
+func (q ProfilesQ) Update(ctx context.Context) (int64, error) {
+	query, args, err := q.updater.ToSql()
 	if err != nil {
-		return nil, fmt.Errorf("building update query for %s: %w", profilesTable, err)
+		return 0, fmt.Errorf("building update query for %s: %w", profilesTable, err)
 	}
 
-	rows, err := q.db.QueryContext(ctx, query, args...)
+	res, err := q.db.ExecContext(ctx, query, args...)
 	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var out []Profile
-	for rows.Next() {
-		var p Profile
-		err = p.scan(rows)
-		if err != nil {
-			return nil, fmt.Errorf("scanning profile: %w", err)
-		}
-		out = append(out, p)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, err
+		return 0, fmt.Errorf("executing update query for %s: %w", profilesTable, err)
 	}
 
-	return out, nil
+	aff, err := res.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("rows affected for %s: %w", profilesTable, err)
+	}
+
+	return aff, nil
 }
 
 func (q ProfilesQ) UpdateOne(ctx context.Context) (Profile, error) {
-	rows, err := q.Update(ctx)
+	query, args, err := q.updater.Suffix("RETURNING " + ProfilesColumns).ToSql()
 	if err != nil {
+		return Profile{}, fmt.Errorf("building update query for %s: %w", profilesTable, err)
+	}
+
+	row := q.db.QueryRowContext(ctx, query, args...)
+
+	var p Profile
+	err = row.Scan(
+		&p.AccountID,
+		&p.Username,
+		&p.Official,
+		&p.Pseudonym,
+		&p.Description,
+		&p.Avatar,
+		&p.CreatedAt,
+		&p.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return Profile{}, nil
+		}
 		return Profile{}, err
 	}
-	if len(rows) != 1 {
-		return Profile{}, fmt.Errorf("expected 1 profile to be updated, got %d", len(rows))
-	}
-	return rows[0], nil
+
+	return p, nil
 }
 
 func (q ProfilesQ) UpdateUsername(username string) ProfilesQ {
@@ -150,18 +163,28 @@ func (q ProfilesQ) UpdateOfficial(official bool) ProfilesQ {
 	return q
 }
 
-func (q ProfilesQ) UpdatePseudonym(pseudonym *string) ProfilesQ {
-	q.updater = q.updater.Set("pseudonym", pseudonym)
+func (q ProfilesQ) UpdatePseudonym(pseudonym string) ProfilesQ {
+	if pseudonym == "" {
+		q.updater = q.updater.Set("pseudonym", nil)
+	} else {
+		q.updater = q.updater.Set("pseudonym", pseudonym)
+	}
 	return q
 }
 
-func (q ProfilesQ) UpdateDescription(description *string) ProfilesQ {
-	q.updater = q.updater.Set("description", description)
+func (q ProfilesQ) UpdateDescription(description string) ProfilesQ {
+	if description == "" {
+		q.updater = q.updater.Set("description", nil)
+	} else {
+		q.updater = q.updater.Set("description", description)
+	}
 	return q
 }
 
-func (q ProfilesQ) UpdateAvatar(avatar *string) ProfilesQ {
-	q.updater = q.updater.Set("avatar", avatar)
+func (q ProfilesQ) UpdateAvatar(avatar string) ProfilesQ {
+	if avatar == "" {
+		q.updater = q.updater.Set("avatar", nil)
+	}
 	return q
 }
 

@@ -93,10 +93,35 @@ components:
             $ref: "#/components/schemas/ProfileData"
           type: array
         links:
-          $ref: "#/components/schemas/ProfilesCollection_links"
+          $ref: "#/components/schemas/PaginationData"
       required:
       - data
       - links
+      type: object
+    PaginationData:
+      properties:
+        self:
+          description: link to the current page
+          format: uri
+          type: string
+        first:
+          description: link to the first page
+          format: uri
+          type: string
+        last:
+          description: link to the last page
+          format: uri
+          type: string
+        prev:
+          description: link to the previous page
+          format: uri
+          type: string
+        next:
+          description: link to the next page
+          format: uri
+          type: string
+      required:
+      - self
       type: object
     UpdateProfile_data_attributes:
       properties:
@@ -119,7 +144,7 @@ components:
           type: string
         type:
           enum:
-          - profile
+          - update_profile
           type: string
         attributes:
           $ref: "#/components/schemas/UpdateProfile_data_attributes"
@@ -144,7 +169,7 @@ components:
           type: string
         type:
           enum:
-          - profile
+          - update_profile_official
           type: string
         attributes:
           $ref: "#/components/schemas/UpdateOfficial_data_attributes"
@@ -152,26 +177,4 @@ components:
       - attributes
       - id
       - type
-      type: object
-    ProfilesCollection_links:
-      properties:
-        page_number:
-          description: The current page number.
-          example: 1
-          format: int64
-          type: integer
-        page_size:
-          description: The number of items per page.
-          example: 10
-          format: int64
-          type: integer
-        total_items:
-          description: The total number of items available.
-          example: 100
-          format: int64
-          type: integer
-      required:
-      - page_number
-      - page_size
-      - total_items
       type: object

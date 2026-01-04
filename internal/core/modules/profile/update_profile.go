@@ -23,14 +23,7 @@ func (s Service) UpdateProfile(ctx context.Context, accountID uuid.UUID, input U
 		return models.Profile{}, err
 	}
 
-	err = s.repo.Transaction(ctx, func(txCtx context.Context) error {
-		err = s.messanger.WriteProfileUpdated(ctx, profile)
-		if err != nil {
-			return errx.ErrorInternal.Raise(
-				fmt.Errorf("sending profile updated event for user '%s': %w", accountID, err),
-			)
-		}
-
+	if err = s.repo.Transaction(ctx, func(ctx context.Context) error {
 		profile, err = s.repo.UpdateProfile(ctx, accountID, input)
 		if err != nil {
 			return errx.ErrorInternal.Raise(
@@ -38,8 +31,17 @@ func (s Service) UpdateProfile(ctx context.Context, accountID uuid.UUID, input U
 			)
 		}
 
+		err = s.messanger.WriteProfileUpdated(ctx, profile)
+		if err != nil {
+			return errx.ErrorInternal.Raise(
+				fmt.Errorf("sending profile updated event for user '%s': %w", accountID, err),
+			)
+		}
+
 		return nil
-	})
+	}); err != nil {
+		return models.Profile{}, err
+	}
 
 	return profile, nil
 }
@@ -50,14 +52,7 @@ func (s Service) UpdateProfileOfficial(ctx context.Context, accountID uuid.UUID,
 		return models.Profile{}, err
 	}
 
-	err = s.repo.Transaction(ctx, func(txCtx context.Context) error {
-		err = s.messanger.WriteProfileUpdated(ctx, profile)
-		if err != nil {
-			return errx.ErrorInternal.Raise(
-				fmt.Errorf("sending profile updated event for user '%s': %w", accountID, err),
-			)
-		}
-
+	if err = s.repo.Transaction(ctx, func(ctx context.Context) error {
 		profile, err = s.repo.UpdateProfileOfficial(ctx, accountID, official)
 		if err != nil {
 			return errx.ErrorInternal.Raise(
@@ -65,8 +60,17 @@ func (s Service) UpdateProfileOfficial(ctx context.Context, accountID uuid.UUID,
 			)
 		}
 
+		err = s.messanger.WriteProfileUpdated(ctx, profile)
+		if err != nil {
+			return errx.ErrorInternal.Raise(
+				fmt.Errorf("sending profile updated event for user '%s': %w", accountID, err),
+			)
+		}
+
 		return nil
-	})
+	}); err != nil {
+		return models.Profile{}, err
+	}
 
 	return profile, nil
 }

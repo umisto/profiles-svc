@@ -16,7 +16,7 @@ func UpdateProfile(r *http.Request) (req resources.UpdateProfile, err error) {
 
 	errs := validation.Errors{
 		"data/id":         validation.Validate(req.Data.Id, validation.Required),
-		"data/type":       validation.Validate(req.Data.Type, validation.Required, validation.In(resources.ProfileType)),
+		"data/type":       validation.Validate(req.Data.Type, validation.Required, validation.In("update_profile")),
 		"data/attributes": validation.Validate(req.Data.Attributes, validation.Required),
 	}
 	return req, errs.Filter()

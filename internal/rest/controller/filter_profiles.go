@@ -32,5 +32,5 @@ func (s Service) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ape.Render(w, http.StatusOK, responses.ProfileCollection(res))
+	ape.Render(w, http.StatusOK, responses.ProfileCollection(r, res))
 }

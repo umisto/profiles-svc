@@ -1,18 +1,6 @@
 -- +migrate Up
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE profiles (
-    account_id  UUID PRIMARY KEY,
-    username    VARCHAR(32) NOT NULL UNIQUE,
-    official    BOOLEAN NOT NULL DEFAULT FALSE,
-    pseudonym   VARCHAR(128),
-    description VARCHAR(255),
-    avatar      TEXT,
-
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
 CREATE TYPE outbox_event_status AS ENUM (
     'pending',
     'processing',
@@ -59,6 +47,18 @@ CREATE TABLE inbox_events (
     created_at    TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'UTC'),
     next_retry_at TIMESTAMPTZ,
     processed_at  TIMESTAMPTZ
+);
+
+CREATE TABLE profiles (
+    account_id  UUID PRIMARY KEY,
+    username    VARCHAR(32) NOT NULL UNIQUE,
+    official    BOOLEAN NOT NULL DEFAULT FALSE,
+    pseudonym   VARCHAR(128),
+    description VARCHAR(255),
+    avatar      TEXT,
+
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- +migrate Down

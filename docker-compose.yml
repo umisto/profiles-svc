@@ -11,6 +11,7 @@ services:
 
   profile-svc-postgres:
     image: postgres:15
+    container_name: profile-svc-postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

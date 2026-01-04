@@ -5,13 +5,13 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Data** | [**[]ProfileData**](ProfileData.md) |  | 
-**Links** | [**ProfilesCollectionLinks**](ProfilesCollectionLinks.md) |  | 
+**Links** | [**PaginationData**](PaginationData.md) |  | 
 
 ## Methods
 
 ### NewProfilesCollection
 
-`func NewProfilesCollection(data []ProfileData, links ProfilesCollectionLinks, ) *ProfilesCollection`
+`func NewProfilesCollection(data []ProfileData, links PaginationData, ) *ProfilesCollection`
 
 NewProfilesCollection instantiates a new ProfilesCollection object
 This constructor will assign default values to properties that have it defined,
@@ -48,20 +48,20 @@ SetData sets Data field to given value.
 
 ### GetLinks
 
-`func (o *ProfilesCollection) GetLinks() ProfilesCollectionLinks`
+`func (o *ProfilesCollection) GetLinks() PaginationData`
 
 GetLinks returns the Links field if non-nil, zero value otherwise.
 
 ### GetLinksOk
 
-`func (o *ProfilesCollection) GetLinksOk() (*ProfilesCollectionLinks, bool)`
+`func (o *ProfilesCollection) GetLinksOk() (*PaginationData, bool)`
 
 GetLinksOk returns a tuple with the Links field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetLinks
 
-`func (o *ProfilesCollection) SetLinks(v ProfilesCollectionLinks)`
+`func (o *ProfilesCollection) SetLinks(v PaginationData)`
 
 SetLinks sets Links field to given value.
 

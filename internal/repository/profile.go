@@ -13,9 +13,10 @@ import (
 )
 
 func (r Repository) CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error) {
-	res, err := r.profilesQ().Insert(ctx, pgdb.Profile{
+	res, err := r.profilesQ(ctx).Insert(ctx, pgdb.InsertProfileParams{
 		AccountID: userID,
 		Username:  username,
+		Official:  false,
 	})
 	if err != nil {
 		return models.Profile{}, err
@@ -25,7 +26,7 @@ func (r Repository) CreateProfile(ctx context.Context, userID uuid.UUID, usernam
 }
 
 func (r Repository) GetProfileByAccountID(ctx context.Context, accountId uuid.UUID) (models.Profile, error) {
-	row, err := r.profilesQ().FilterAccountID(accountId).Get(ctx)
+	row, err := r.profilesQ(ctx).FilterAccountID(accountId).Get(ctx)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
 		return models.Profile{}, nil
@@ -37,7 +38,7 @@ func (r Repository) GetProfileByAccountID(ctx context.Context, accountId uuid.UU
 }
 
 func (r Repository) GetProfileByUsername(ctx context.Context, username string) (models.Profile, error) {
-	row, err := r.profilesQ().FilterUsername(username).Get(ctx)
+	row, err := r.profilesQ(ctx).FilterUsername(username).Get(ctx)
 	switch {
 	case errors.Is(err, sql.ErrNoRows):
 		return models.Profile{}, nil
@@ -53,16 +54,16 @@ func (r Repository) UpdateProfile(
 	accountID uuid.UUID,
 	input profile.UpdateParams,
 ) (models.Profile, error) {
-	q := r.profilesQ().FilterAccountID(accountID)
+	q := r.profilesQ(ctx).FilterAccountID(accountID)
 
 	if input.Pseudonym != nil {
-		q = q.UpdatePseudonym(input.Pseudonym)
+		q = q.UpdatePseudonym(*input.Pseudonym)
 	}
 	if input.Description != nil {
-		q = q.UpdateDescription(input.Description)
+		q = q.UpdateDescription(*input.Description)
 	}
 	if input.Avatar != nil {
-		q = q.UpdateAvatar(input.Avatar)
+		q = q.UpdateAvatar(*input.Avatar)
 	}
 
 	res, err := q.UpdateOne(ctx)
@@ -78,7 +79,7 @@ func (r Repository) UpdateProfileUsername(
 	accountID uuid.UUID,
 	username string,
 ) (models.Profile, error) {
-	res, err := r.profilesQ().
+	res, err := r.profilesQ(ctx).
 		FilterAccountID(accountID).
 		UpdateUsername(username).
 		UpdateOne(ctx)
@@ -94,7 +95,7 @@ func (r Repository) UpdateProfileOfficial(
 	accountID uuid.UUID,
 	official bool,
 ) (models.Profile, error) {
-	res, err := r.profilesQ().
+	res, err := r.profilesQ(ctx).
 		FilterAccountID(accountID).
 		UpdateOfficial(official).
 		UpdateOne(ctx)
@@ -111,7 +112,7 @@ func (r Repository) FilterProfilesByUsername(
 	offset uint,
 	limit uint,
 ) (pagi.Page[[]models.Profile], error) {
-	rows, err := r.profilesQ().
+	rows, err := r.profilesQ(ctx).
 		FilterLikeUsername(prefix).
 		Page(limit, offset).
 		Select(ctx)
@@ -124,7 +125,7 @@ func (r Repository) FilterProfilesByUsername(
 		collection = append(collection, row.ToModel())
 	}
 
-	total, err := r.profilesQ().
+	total, err := r.profilesQ(ctx).
 		FilterLikeUsername(prefix).
 		Count(ctx)
 	if err != nil {
@@ -144,13 +145,17 @@ func (r Repository) FilterProfiles(
 	params profile.FilterParams,
 	limit, offset uint,
 ) (pagi.Page[[]models.Profile], error) {
-	q := r.profilesQ()
+	q := r.profilesQ(ctx)
 
 	if params.PseudonymPrefix != nil {
 		q = q.FilterLikePseudonym(*params.PseudonymPrefix)
 	}
 	if params.UsernamePrefix != nil {
 		q = q.FilterLikeUsername(*params.UsernamePrefix)
+	}
+
+	if limit == 0 {
+		limit = 10
 	}
 
 	rows, err := q.Page(limit, offset).Select(ctx)
@@ -177,5 +182,5 @@ func (r Repository) FilterProfiles(
 }
 
 func (r Repository) DeleteProfile(ctx context.Context, accountID uuid.UUID) error {
-	return r.profilesQ().FilterAccountID(accountID).Delete(ctx)
+	return r.profilesQ(ctx).FilterAccountID(accountID).Delete(ctx)
 }

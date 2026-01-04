@@ -22,7 +22,7 @@ var _ MappedNullable = &ProfilesCollection{}
 // ProfilesCollection struct for ProfilesCollection
 type ProfilesCollection struct {
 	Data []ProfileData `json:"data"`
-	Links ProfilesCollectionLinks `json:"links"`
+	Links PaginationData `json:"links"`
 }
 
 type _ProfilesCollection ProfilesCollection
@@ -31,7 +31,7 @@ type _ProfilesCollection ProfilesCollection
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewProfilesCollection(data []ProfileData, links ProfilesCollectionLinks) *ProfilesCollection {
+func NewProfilesCollection(data []ProfileData, links PaginationData) *ProfilesCollection {
 	this := ProfilesCollection{}
 	this.Data = data
 	this.Links = links
@@ -71,9 +71,9 @@ func (o *ProfilesCollection) SetData(v []ProfileData) {
 }
 
 // GetLinks returns the Links field value
-func (o *ProfilesCollection) GetLinks() ProfilesCollectionLinks {
+func (o *ProfilesCollection) GetLinks() PaginationData {
 	if o == nil {
-		var ret ProfilesCollectionLinks
+		var ret PaginationData
 		return ret
 	}
 
@@ -82,7 +82,7 @@ func (o *ProfilesCollection) GetLinks() ProfilesCollectionLinks {
 
 // GetLinksOk returns a tuple with the Links field value
 // and a boolean to check if the value has been set.
-func (o *ProfilesCollection) GetLinksOk() (*ProfilesCollectionLinks, bool) {
+func (o *ProfilesCollection) GetLinksOk() (*PaginationData, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -90,7 +90,7 @@ func (o *ProfilesCollection) GetLinksOk() (*ProfilesCollectionLinks, bool) {
 }
 
 // SetLinks sets field value
-func (o *ProfilesCollection) SetLinks(v ProfilesCollectionLinks) {
+func (o *ProfilesCollection) SetLinks(v PaginationData) {
 	o.Links = v
 }
 

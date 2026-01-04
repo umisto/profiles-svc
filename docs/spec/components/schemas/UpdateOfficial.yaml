@@ -15,7 +15,7 @@ properties:
         description: "user id"
       type:
         type: string
-        enum: [ profile ]
+        enum: [ update_profile_official ]
       attributes:
         type: object
         required:

@@ -1,4 +1,4 @@
-# ProfilesCollectionLinks
+# PaginationData
 
 ## Properties
 
@@ -12,140 +12,140 @@ Name | Type | Description | Notes
 
 ## Methods
 
-### NewProfilesCollectionLinks
+### NewPaginationData
 
-`func NewProfilesCollectionLinks(self string, ) *ProfilesCollectionLinks`
+`func NewPaginationData(self string, ) *PaginationData`
 
-NewProfilesCollectionLinks instantiates a new ProfilesCollectionLinks object
+NewPaginationData instantiates a new PaginationData object
 This constructor will assign default values to properties that have it defined,
 and makes sure properties required by API are set, but the set of arguments
 will change when the set of required properties is changed
 
-### NewProfilesCollectionLinksWithDefaults
+### NewPaginationDataWithDefaults
 
-`func NewProfilesCollectionLinksWithDefaults() *ProfilesCollectionLinks`
+`func NewPaginationDataWithDefaults() *PaginationData`
 
-NewProfilesCollectionLinksWithDefaults instantiates a new ProfilesCollectionLinks object
+NewPaginationDataWithDefaults instantiates a new PaginationData object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
 ### GetSelf
 
-`func (o *ProfilesCollectionLinks) GetSelf() string`
+`func (o *PaginationData) GetSelf() string`
 
 GetSelf returns the Self field if non-nil, zero value otherwise.
 
 ### GetSelfOk
 
-`func (o *ProfilesCollectionLinks) GetSelfOk() (*string, bool)`
+`func (o *PaginationData) GetSelfOk() (*string, bool)`
 
 GetSelfOk returns a tuple with the Self field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetSelf
 
-`func (o *ProfilesCollectionLinks) SetSelf(v string)`
+`func (o *PaginationData) SetSelf(v string)`
 
 SetSelf sets Self field to given value.
 
 
 ### GetFirst
 
-`func (o *ProfilesCollectionLinks) GetFirst() string`
+`func (o *PaginationData) GetFirst() string`
 
 GetFirst returns the First field if non-nil, zero value otherwise.
 
 ### GetFirstOk
 
-`func (o *ProfilesCollectionLinks) GetFirstOk() (*string, bool)`
+`func (o *PaginationData) GetFirstOk() (*string, bool)`
 
 GetFirstOk returns a tuple with the First field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetFirst
 
-`func (o *ProfilesCollectionLinks) SetFirst(v string)`
+`func (o *PaginationData) SetFirst(v string)`
 
 SetFirst sets First field to given value.
 
 ### HasFirst
 
-`func (o *ProfilesCollectionLinks) HasFirst() bool`
+`func (o *PaginationData) HasFirst() bool`
 
 HasFirst returns a boolean if a field has been set.
 
 ### GetLast
 
-`func (o *ProfilesCollectionLinks) GetLast() string`
+`func (o *PaginationData) GetLast() string`
 
 GetLast returns the Last field if non-nil, zero value otherwise.
 
 ### GetLastOk
 
-`func (o *ProfilesCollectionLinks) GetLastOk() (*string, bool)`
+`func (o *PaginationData) GetLastOk() (*string, bool)`
 
 GetLastOk returns a tuple with the Last field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetLast
 
-`func (o *ProfilesCollectionLinks) SetLast(v string)`
+`func (o *PaginationData) SetLast(v string)`
 
 SetLast sets Last field to given value.
 
 ### HasLast
 
-`func (o *ProfilesCollectionLinks) HasLast() bool`
+`func (o *PaginationData) HasLast() bool`
 
 HasLast returns a boolean if a field has been set.
 
 ### GetPrev
 
-`func (o *ProfilesCollectionLinks) GetPrev() string`
+`func (o *PaginationData) GetPrev() string`
 
 GetPrev returns the Prev field if non-nil, zero value otherwise.
 
 ### GetPrevOk
 
-`func (o *ProfilesCollectionLinks) GetPrevOk() (*string, bool)`
+`func (o *PaginationData) GetPrevOk() (*string, bool)`
 
 GetPrevOk returns a tuple with the Prev field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetPrev
 
-`func (o *ProfilesCollectionLinks) SetPrev(v string)`
+`func (o *PaginationData) SetPrev(v string)`
 
 SetPrev sets Prev field to given value.
 
 ### HasPrev
 
-`func (o *ProfilesCollectionLinks) HasPrev() bool`
+`func (o *PaginationData) HasPrev() bool`
 
 HasPrev returns a boolean if a field has been set.
 
 ### GetNext
 
-`func (o *ProfilesCollectionLinks) GetNext() string`
+`func (o *PaginationData) GetNext() string`
 
 GetNext returns the Next field if non-nil, zero value otherwise.
 
 ### GetNextOk
 
-`func (o *ProfilesCollectionLinks) GetNextOk() (*string, bool)`
+`func (o *PaginationData) GetNextOk() (*string, bool)`
 
 GetNextOk returns a tuple with the Next field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetNext
 
-`func (o *ProfilesCollectionLinks) SetNext(v string)`
+`func (o *PaginationData) SetNext(v string)`
 
 SetNext sets Next field to given value.
 
 ### HasNext
 
-`func (o *ProfilesCollectionLinks) HasNext() bool`
+`func (o *PaginationData) HasNext() bool`
 
 HasNext returns a boolean if a field has been set.
 

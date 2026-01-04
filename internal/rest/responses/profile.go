@@ -1,6 +1,8 @@
 package responses
 
 import (
+	"net/http"
+
 	"github.com/netbill/pagi"
 	"github.com/netbill/profiles-svc/internal/core/models"
 	"github.com/netbill/profiles-svc/resources"
@@ -26,16 +28,23 @@ func Profile(m models.Profile) resources.Profile {
 	return resp
 }
 
-func ProfileCollection(m pagi.Page[[]models.Profile]) resources.ProfilesCollection {
-	resp := resources.ProfilesCollection{
-		Data: make([]resources.ProfileData, 0, len(m.Data)),
+func ProfileCollection(r *http.Request, m pagi.Page[[]models.Profile]) resources.ProfilesCollection {
+	data := make([]resources.ProfileData, len(m.Data))
+
+	for i, profile := range m.Data {
+		data[i] = Profile(profile).Data
 	}
 
-	for _, el := range m.Data {
-		p := Profile(el).Data
+	links := pagi.BuildPageLinks(r, m.Page, m.Size, m.Total)
 
-		resp.Data = append(resp.Data, p)
+	return resources.ProfilesCollection{
+		Data: data,
+		Links: resources.PaginationData{
+			First: links.First,
+			Last:  links.Last,
+			Prev:  links.Prev,
+			Next:  links.Next,
+			Self:  links.Self,
+		},
 	}
-
-	return resp
 }

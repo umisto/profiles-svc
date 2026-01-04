@@ -18,8 +18,8 @@ func New(db *sql.DB) *Repository {
 	}
 }
 
-func (r Repository) profilesQ() pgdb.ProfilesQ {
-	return pgdb.NewProfilesQ(r.db)
+func (r Repository) profilesQ(ctx context.Context) pgdb.ProfilesQ {
+	return pgdb.NewProfilesQ(pgx.Exec(r.db, ctx))
 }
 
 func (r Repository) Transaction(ctx context.Context, fn func(ctx context.Context) error) error {
