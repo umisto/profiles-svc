@@ -12,13 +12,18 @@ properties:
       id:
         type: string
         format: uuid
-        description: "user id"
+        description: "account id"
       type:
         type: string
-        enum: [ update_profile ]
+        enum: [ create_profile ]
       attributes:
         type: object
+        required:
+          - username
         properties:
+          username:
+            type: string
+            description: "Username"
           pseudonym:
             type: string
             description: "Pseudonym"

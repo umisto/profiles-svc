@@ -1,4 +1,4 @@
-# UpdateProfileData
+# UpdateProfileUsernameData
 
 ## Properties
 
@@ -6,83 +6,83 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | [**uuid.UUID**](uuid.UUID.md) | account id | 
 **Type** | **string** |  | 
-**Attributes** | [**UpdateProfileDataAttributes**](UpdateProfileDataAttributes.md) |  | 
+**Attributes** | [**UpdateProfileUsernameDataAttributes**](UpdateProfileUsernameDataAttributes.md) |  | 
 
 ## Methods
 
-### NewUpdateProfileData
+### NewUpdateProfileUsernameData
 
-`func NewUpdateProfileData(id uuid.UUID, type_ string, attributes UpdateProfileDataAttributes, ) *UpdateProfileData`
+`func NewUpdateProfileUsernameData(id uuid.UUID, type_ string, attributes UpdateProfileUsernameDataAttributes, ) *UpdateProfileUsernameData`
 
-NewUpdateProfileData instantiates a new UpdateProfileData object
+NewUpdateProfileUsernameData instantiates a new UpdateProfileUsernameData object
 This constructor will assign default values to properties that have it defined,
 and makes sure properties required by API are set, but the set of arguments
 will change when the set of required properties is changed
 
-### NewUpdateProfileDataWithDefaults
+### NewUpdateProfileUsernameDataWithDefaults
 
-`func NewUpdateProfileDataWithDefaults() *UpdateProfileData`
+`func NewUpdateProfileUsernameDataWithDefaults() *UpdateProfileUsernameData`
 
-NewUpdateProfileDataWithDefaults instantiates a new UpdateProfileData object
+NewUpdateProfileUsernameDataWithDefaults instantiates a new UpdateProfileUsernameData object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
 ### GetId
 
-`func (o *UpdateProfileData) GetId() uuid.UUID`
+`func (o *UpdateProfileUsernameData) GetId() uuid.UUID`
 
 GetId returns the Id field if non-nil, zero value otherwise.
 
 ### GetIdOk
 
-`func (o *UpdateProfileData) GetIdOk() (*uuid.UUID, bool)`
+`func (o *UpdateProfileUsernameData) GetIdOk() (*uuid.UUID, bool)`
 
 GetIdOk returns a tuple with the Id field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetId
 
-`func (o *UpdateProfileData) SetId(v uuid.UUID)`
+`func (o *UpdateProfileUsernameData) SetId(v uuid.UUID)`
 
 SetId sets Id field to given value.
 
 
 ### GetType
 
-`func (o *UpdateProfileData) GetType() string`
+`func (o *UpdateProfileUsernameData) GetType() string`
 
 GetType returns the Type field if non-nil, zero value otherwise.
 
 ### GetTypeOk
 
-`func (o *UpdateProfileData) GetTypeOk() (*string, bool)`
+`func (o *UpdateProfileUsernameData) GetTypeOk() (*string, bool)`
 
 GetTypeOk returns a tuple with the Type field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetType
 
-`func (o *UpdateProfileData) SetType(v string)`
+`func (o *UpdateProfileUsernameData) SetType(v string)`
 
 SetType sets Type field to given value.
 
 
 ### GetAttributes
 
-`func (o *UpdateProfileData) GetAttributes() UpdateProfileDataAttributes`
+`func (o *UpdateProfileUsernameData) GetAttributes() UpdateProfileUsernameDataAttributes`
 
 GetAttributes returns the Attributes field if non-nil, zero value otherwise.
 
 ### GetAttributesOk
 
-`func (o *UpdateProfileData) GetAttributesOk() (*UpdateProfileDataAttributes, bool)`
+`func (o *UpdateProfileUsernameData) GetAttributesOk() (*UpdateProfileUsernameDataAttributes, bool)`
 
 GetAttributesOk returns a tuple with the Attributes field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetAttributes
 
-`func (o *UpdateProfileData) SetAttributes(v UpdateProfileDataAttributes)`
+`func (o *UpdateProfileUsernameData) SetAttributes(v UpdateProfileUsernameDataAttributes)`
 
 SetAttributes sets Attributes field to given value.
 

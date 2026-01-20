@@ -1,0 +1,31 @@
+type: object
+required:
+  - data
+properties:
+  data:
+    type: object
+    required:
+      - id
+      - type
+      - attributes
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: "account id"
+      type:
+        type: string
+        enum: [ update_profile ]
+      attributes:
+        type: object
+        properties:
+          pseudonym:
+            type: string
+            description: "Pseudonym"
+          description:
+            type: string
+            description: "Description"
+          avatar:
+            type: string
+            format: uri
+            description: "Avatar URL"

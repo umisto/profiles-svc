@@ -1,36 +1,52 @@
-openapi: 3.0.0
+openapi: 3.1.1
 info:
-  title: Chains lab profile service
-  description: profile service docs
-  version: 0.0.1
+  title: NetBill profile service
+  description: profile-svc docs
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:8001
 
 paths:
-  /test:
-    post:
-      tags:
-        - Test
-      description: Test
-      responses:
-        '201':
-          description: successfully
+  /profiles-svc/v1/profiles/:
+    $ref: "./spec/paths/FilterProfiles.yaml"
+  /profiles-svc/v1/profiles/u/{username}:
+    $ref: "./spec/paths/ProfileByUsername.yaml"
+
+  /profiles-svc/v1/profiles/me/:
+    $ref: "./spec/paths/MyProfile.yaml"
+  /profiles-svc/v1/profiles/me/username:
+    $ref: "./spec/paths/MyProfileUsername.yaml"
+
+  /profiles-svc/v1/profiles/{account_id}:
+    $ref: "./spec/paths/ProfileByID.yaml"
+  /profiles-svc/v1/profiles/{account_id}/official:
+    $ref: "./spec/paths/ProfileOfficial.yaml"
+
 
 components:
   schemas:
     #requests
+    CreateProfile:
+      $ref: './spec/components/schemas/requests/CreateProfile.yaml'
     UpdateProfile:
-      $ref: './spec/components/schemas/UpdateProfile.yaml'
-    UpdateOfficial:
-      $ref: './spec/components/schemas/UpdateOfficial.yaml'
+      $ref: './spec/components/schemas/requests/UpdateProfile.yaml'
+    UpdateProfileOfficial:
+      $ref: './spec/components/schemas/requests/UpdateProfileOfficial.yaml'
+    UpdateProfileUsername:
+      $ref: './spec/components/schemas/requests/UpdateProfileUsername.yaml'
 
     #responses
     Profile:
-        $ref: './spec/components/schemas/Profile.yaml'
+      $ref: './spec/components/schemas/responses/Profile.yaml'
     ProfileData:
-      $ref: './spec/components/schemas/ProfileData.yaml'
+      $ref: './spec/components/schemas/responses/ProfileData.yaml'
     ProfileAttributes:
-      $ref: './spec/components/schemas/ProfileAttributes.yaml'
+      $ref: './spec/components/schemas/responses/ProfileAttributes.yaml'
     ProfilesCollection:
-      $ref: './spec/components/schemas/ProfilesCollection.yaml'
+      $ref: './spec/components/schemas/responses/ProfilesCollection.yaml'
 
+    Errors:
+      $ref: './spec/components/schemas/responses/Errors.yaml'
     PaginationData:
-      $ref: './spec/components/schemas/PaginationData.yaml'
+      $ref: './spec/components/schemas/responses/PaginationData.yaml'

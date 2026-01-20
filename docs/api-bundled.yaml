@@ -1,19 +1,342 @@
-openapi: 3.0.0
+openapi: 3.1.1
 info:
-  title: Chains lab profile service
-  description: profile service docs
-  version: 0.0.1
+  title: NetBill profile service
+  description: profile-svc docs
+  version: 0.1.0
+servers:
+  - url: 'http://localhost:8001'
 paths:
-  /test:
-    post:
+  /profiles-svc/v1/profiles/:
+    get:
       tags:
-        - Test
-      description: Test
+        - Profiles
+      summary: Filter profiles
+      description: |
+        Returns a paginated list of public profiles filtered by optional query parameters. Supports prefix-based filtering for `username` and `pseudonym`.
+      parameters:
+        - name: username_like
+          in: query
+          required: false
+          description: Prefix filter for username.
+          schema:
+            type: string
+            minLength: 1
+        - name: pseudonym
+          in: query
+          required: false
+          description: Prefix filter for pseudonym.
+          schema:
+            type: string
+            minLength: 1
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of items to return.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          required: false
+          description: Number of items to skip.
+          schema:
+            type: integer
+            minimum: 0
       responses:
-        '201':
-          description: successfully
+        '200':
+          description: Profiles list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilesCollection'
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+  '/profiles-svc/v1/profiles/u/{username}':
+    get:
+      tags:
+        - Profiles
+      summary: Get profile by username
+      description: |
+        Returns a public profile by `username`. If the profile does not exist, responds with 404.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username of the profile owner.
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Profile found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '404':
+          description: Profile for user does not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+  /profiles-svc/v1/profiles/me/:
+    get:
+      tags:
+        - Profiles
+      summary: Get my profile
+      description: |
+        Returns the current authenticated user's profile. Requires a valid access token.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+    put:
+      tags:
+        - Profiles
+      summary: Update my profile
+      description: |
+        Updates the current authenticated user's profile. The request body must contain the same `data.id` as the authenticated account id.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfile'
+      responses:
+        '200':
+          description: Profile updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Bad request (validation error / invalid payload).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '401':
+          description: Unauthorized (missing/invalid token or profile does not exist).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '403':
+          description: Forbidden (user too young).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+  /profiles-svc/v1/profiles/me/username:
+    patch:
+      tags:
+        - Profiles
+      summary: Update profile username
+      description: |
+        Updates profile `username` by profile id. Returns 409 if the username is already taken.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileUsername'
+      responses:
+        '200':
+          description: Username updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Bad request (validation error / username is not allowed / invalid payload).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '404':
+          description: Profile for user does not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '409':
+          description: Conflict (username is already taken).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+  '/profiles-svc/v1/profiles/{account_id}':
+    get:
+      tags:
+        - Profiles
+      summary: Get profile by account id
+      description: |
+        Returns a public profile by `account_id` (UUID). If the profile does not exist, responds with 404.
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          description: Account id (UUID).
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Profile found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Bad request (invalid account_id).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '404':
+          description: Profile for account does not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+  '/profiles-svc/v1/profiles/{account_id}/official':
+    patch:
+      tags:
+        - Profiles
+      summary: Update profile official status
+      description: |
+        Updates the `official` status of a profile by profile id.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: account_id
+          in: path
+          required: true
+          description: Account id (UUID).
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileOfficial'
+      responses:
+        '200':
+          description: Official status updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Bad request (invalid payload / validation error).
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '404':
+          description: Profile for account does not exist.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Errors'
 components:
   schemas:
+    CreateProfile:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - id
+            - type
+            - attributes
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: account id
+            type:
+              type: string
+              enum:
+                - create_profile
+            attributes:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+                  description: Username
+                pseudonym:
+                  type: string
+                  description: Pseudonym
+                description:
+                  type: string
+                  description: Description
+                avatar:
+                  type: string
+                  format: uri
+                  description: Avatar URL
     UpdateProfile:
       type: object
       required:
@@ -29,7 +352,7 @@ components:
             id:
               type: string
               format: uuid
-              description: user id
+              description: account id
             type:
               type: string
               enum:
@@ -47,7 +370,7 @@ components:
                   type: string
                   format: uri
                   description: Avatar URL
-    UpdateOfficial:
+    UpdateProfileOfficial:
       type: object
       required:
         - data
@@ -62,7 +385,7 @@ components:
             id:
               type: string
               format: uuid
-              description: user id
+              description: account id
             type:
               type: string
               enum:
@@ -75,6 +398,34 @@ components:
                 official:
                   type: boolean
                   description: official
+    UpdateProfileUsername:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - id
+            - type
+            - attributes
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: account id
+            type:
+              type: string
+              enum:
+                - update_profile_username
+            attributes:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+                  description: username
     Profile:
       type: object
       required:
@@ -143,6 +494,40 @@ components:
             $ref: '#/components/schemas/ProfileData'
         links:
           $ref: '#/components/schemas/PaginationData'
+    Errors:
+      description: 'Standard JSON:API error'
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          description: Non empty array of errors occurred during request processing
+          items:
+            type: object
+            required:
+              - title
+              - status
+            properties:
+              title:
+                type: string
+                description: 'Title is a short, human-readable summary of the problem'
+                example: Bad Request
+              detail:
+                type: string
+                description: Detail is a human-readable explanation specific to this occurrence of the problem
+                example: Request body was expected
+              status:
+                type: integer
+                description: Status is the HTTP status code applicable to this problem
+                example: 400
+                enum:
+                  - 400
+                  - 401
+                  - 403
+                  - 404
+                  - 409
+                  - 500
     PaginationData:
       type: object
       required:
