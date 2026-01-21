@@ -15,8 +15,6 @@ paths:
 
   /profiles-svc/v1/profiles/me/:
     $ref: "./spec/paths/MyProfile.yaml"
-  /profiles-svc/v1/profiles/me/username:
-    $ref: "./spec/paths/MyProfileUsername.yaml"
 
   /profiles-svc/v1/profiles/{account_id}:
     $ref: "./spec/paths/ProfileByID.yaml"
@@ -33,8 +31,6 @@ components:
       $ref: './spec/components/schemas/requests/UpdateProfile.yaml'
     UpdateProfileOfficial:
       $ref: './spec/components/schemas/requests/UpdateProfileOfficial.yaml'
-    UpdateProfileUsername:
-      $ref: './spec/components/schemas/requests/UpdateProfileUsername.yaml'
 
     #responses
     Profile:

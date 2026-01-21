@@ -27,8 +27,6 @@ type CreateProfileDataAttributes struct {
 	Pseudonym *string `json:"pseudonym,omitempty"`
 	// Description
 	Description *string `json:"description,omitempty"`
-	// Avatar URL
-	Avatar *string `json:"avatar,omitempty"`
 }
 
 type _CreateProfileDataAttributes CreateProfileDataAttributes
@@ -139,38 +137,6 @@ func (o *CreateProfileDataAttributes) SetDescription(v string) {
 	o.Description = &v
 }
 
-// GetAvatar returns the Avatar field value if set, zero value otherwise.
-func (o *CreateProfileDataAttributes) GetAvatar() string {
-	if o == nil || IsNil(o.Avatar) {
-		var ret string
-		return ret
-	}
-	return *o.Avatar
-}
-
-// GetAvatarOk returns a tuple with the Avatar field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *CreateProfileDataAttributes) GetAvatarOk() (*string, bool) {
-	if o == nil || IsNil(o.Avatar) {
-		return nil, false
-	}
-	return o.Avatar, true
-}
-
-// HasAvatar returns a boolean if a field has been set.
-func (o *CreateProfileDataAttributes) HasAvatar() bool {
-	if o != nil && !IsNil(o.Avatar) {
-		return true
-	}
-
-	return false
-}
-
-// SetAvatar gets a reference to the given string and assigns it to the Avatar field.
-func (o *CreateProfileDataAttributes) SetAvatar(v string) {
-	o.Avatar = &v
-}
-
 func (o CreateProfileDataAttributes) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -187,9 +153,6 @@ func (o CreateProfileDataAttributes) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Description) {
 		toSerialize["description"] = o.Description
-	}
-	if !IsNil(o.Avatar) {
-		toSerialize["avatar"] = o.Avatar
 	}
 	return toSerialize, nil
 }

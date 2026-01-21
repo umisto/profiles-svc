@@ -22,9 +22,6 @@ docs/UpdateProfileDataAttributes.md
 docs/UpdateProfileOfficial.md
 docs/UpdateProfileOfficialData.md
 docs/UpdateProfileOfficialDataAttributes.md
-docs/UpdateProfileUsername.md
-docs/UpdateProfileUsernameData.md
-docs/UpdateProfileUsernameDataAttributes.md
 git_push.sh
 go.mod
 go.sum
@@ -44,9 +41,6 @@ model_update_profile_data_attributes.go
 model_update_profile_official.go
 model_update_profile_official_data.go
 model_update_profile_official_data_attributes.go
-model_update_profile_username.go
-model_update_profile_username_data.go
-model_update_profile_username_data_attributes.go
 response.go
 test/api_profiles_test.go
 utils.go

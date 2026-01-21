@@ -11,7 +11,6 @@ func (p Profile) ToModel() models.Profile {
 		Official:    p.Official,
 		Pseudonym:   p.Pseudonym,
 		Description: p.Description,
-		Avatar:      p.Avatar,
 
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,

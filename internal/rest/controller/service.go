@@ -10,9 +10,7 @@ import (
 	"github.com/netbill/restkit/pagi"
 )
 
-type Domain interface {
-	CreateProfile(ctx context.Context, userID uuid.UUID, params profile.CreateParams) (models.Profile, error)
-
+type domain interface {
 	FilterProfile(
 		ctx context.Context,
 		params profile.FilterParams,
@@ -28,11 +26,11 @@ type Domain interface {
 }
 
 type Service struct {
-	domain Domain
+	domain domain
 	log    logium.Logger
 }
 
-func New(log logium.Logger, profile Domain) Service {
+func New(log logium.Logger, profile domain) Service {
 	return Service{
 		domain: profile,
 		log:    log,

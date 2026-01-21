@@ -16,10 +16,9 @@ func (p Outbound) WriteProfileOfficialUpdated(
 	profile models.Profile,
 ) error {
 	payload, err := json.Marshal(contracts.AccountProfileOfficialUpdatedPayload{
-		Data: contracts.AccountProfileOfficialUpdatedPayloadData{
-			AccountID: profile.AccountID,
-			Official:  profile.Official,
-		},
+		AccountID: profile.AccountID,
+		Official:  profile.Official,
+		UpdatedAt: profile.UpdatedAt,
 	})
 	if err != nil {
 		return err

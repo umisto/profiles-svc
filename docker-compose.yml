@@ -23,6 +23,19 @@ services:
     networks:
       - chains-net
 
+  profiles-svc-swagger:
+    image: swaggerapi/swagger-ui
+    container_name: profiles-svc-swagger
+    environment:
+      - SWAGGER_JSON=/docs/api-bundled.yaml
+    volumes:
+      - ./docs:/docs:ro
+    ports:
+      - "5555:8080"
+    networks:
+      - chains-net
+
+
 volumes:
   pgdata:
   bundle:

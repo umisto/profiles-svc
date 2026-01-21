@@ -3,28 +3,26 @@ package outbound
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/netbill/evebox/header"
-	"github.com/netbill/profiles-svc/internal/core/models"
+	"github.com/netbill/profiles-svc/internal/core/modules/profile"
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
 	"github.com/segmentio/kafka-go"
 )
 
 func (p Outbound) WriteProfileUpdated(
 	ctx context.Context,
-	profile models.Profile,
+	accountID uuid.UUID,
+	params profile.UpdateParams,
+	updatedAt time.Time,
 ) error {
 	payload, err := json.Marshal(contracts.AccountProfileUpdatedPayload{
-		Data: contracts.AccountProfileUpdatedPayloadData{
-			AccountID:   profile.AccountID,
-			Username:    profile.Username,
-			Official:    profile.Official,
-			Pseudonym:   profile.Pseudonym,
-			Description: profile.Description,
-			Avatar:      profile.Avatar,
-		},
-		Timestamp: profile.UpdatedAt,
+		AccountID:   accountID,
+		Pseudonym:   params.Pseudonym,
+		Description: params.Description,
+		UpdatedAt:   updatedAt,
 	})
 	if err != nil {
 		return err
@@ -36,7 +34,7 @@ func (p Outbound) WriteProfileUpdated(
 		ctx,
 		kafka.Message{
 			Topic: contracts.AccountsTopicV1,
-			Key:   []byte(profile.AccountID.String()),
+			Key:   []byte(accountID.String()),
 			Value: payload,
 			Headers: []kafka.Header{
 				{Key: header.EventID, Value: []byte(eventID)}, // Outbox will fill this
@@ -48,7 +46,7 @@ func (p Outbound) WriteProfileUpdated(
 		},
 	)
 
-	p.log.Debugf("profile updated event queued, account_id: %s, event_id: %s", profile.AccountID, eventID)
+	p.log.Debugf("profile updated event queued, account_id: %s, event_id: %s", accountID, eventID)
 
 	return err
 }

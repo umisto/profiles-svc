@@ -12,14 +12,10 @@ import (
 	"github.com/netbill/restkit/pagi"
 )
 
-func (r Repository) CreateProfile(ctx context.Context, userID uuid.UUID, params profile.CreateParams) (models.Profile, error) {
+func (r Repository) CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error) {
 	res, err := r.profilesQ(ctx).Insert(ctx, pgdb.InsertProfileParams{
-		AccountID:   userID,
-		Username:    params.Username,
-		Pseudonym:   params.Pseudonym,
-		Description: params.Description,
-		Avatar:      params.Avatar,
-		Official:    false,
+		AccountID: userID,
+		Username:  username,
 	})
 	if err != nil {
 		return models.Profile{}, err
@@ -64,9 +60,6 @@ func (r Repository) UpdateProfile(
 	}
 	if input.Description != nil {
 		q = q.UpdateDescription(*input.Description)
-	}
-	if input.Avatar != nil {
-		q = q.UpdateAvatar(*input.Avatar)
 	}
 
 	res, err := q.UpdateOne(ctx)

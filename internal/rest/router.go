@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 	"github.com/netbill/logium"
 	"github.com/netbill/profiles-svc/internal"
 	"github.com/netbill/restkit/auth/roles"
@@ -23,7 +24,6 @@ type Handlers interface {
 	UpdateMyProfile(w http.ResponseWriter, r *http.Request)
 
 	UpdateProfileOfficial(w http.ResponseWriter, r *http.Request)
-	UpdateProfileUsername(w http.ResponseWriter, r *http.Request)
 }
 type Middlewares interface {
 	Auth() func(http.Handler) http.Handler
@@ -57,6 +57,16 @@ func (s *Service) Run(ctx context.Context, cfg internal.Config) {
 
 	r := chi.NewRouter()
 
+	// CORS for swagger UI documentation need to delete after configuring nginx
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5555"},
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
+
 	r.Route("/profiles-svc", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
 			r.Route("/profiles", func(r chi.Router) {
@@ -67,7 +77,6 @@ func (s *Service) Run(ctx context.Context, cfg internal.Config) {
 				r.With(auth).Route("/me", func(r chi.Router) {
 					r.Get("/", s.handlers.GetMyProfile)
 					r.Put("/", s.handlers.UpdateMyProfile)
-					r.Patch("/username", s.handlers.UpdateProfileUsername)
 				})
 
 				r.Route("/{user_id}", func(r chi.Router) {

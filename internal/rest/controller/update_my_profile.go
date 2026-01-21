@@ -47,23 +47,12 @@ func (s Service) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 	res, err := s.domain.UpdateProfile(r.Context(), initiator.ID, profile.UpdateParams{
 		Pseudonym:   req.Data.Attributes.Pseudonym,
 		Description: req.Data.Attributes.Description,
-		Avatar:      req.Data.Attributes.Avatar,
 	})
 	if err != nil {
 		s.log.WithError(err).Errorf("failed to update profile")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.Unauthorized("profile for user does not exist"))
-		case errors.Is(err, errx.ErrorUserTooYoung):
-			ape.RenderErr(w, problems.Forbidden("birthday must be at least 12 years ago"))
-		case errors.Is(err, errx.ErrorSexIsNotValid):
-			ape.RenderErr(w, problems.BadRequest(validation.Errors{
-				"sex": fmt.Errorf("sex value is not supported, %s", err),
-			})...)
-		case errors.Is(err, errx.ErrorBirthdateIsNotValid):
-			ape.RenderErr(w, problems.BadRequest(validation.Errors{
-				"birth_date": fmt.Errorf("birth date format is invalid %s", err),
-			})...)
 		default:
 			ape.RenderErr(w, problems.InternalError())
 		}

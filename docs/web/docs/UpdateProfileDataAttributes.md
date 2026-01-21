@@ -6,7 +6,6 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Pseudonym** | Pointer to **string** | Pseudonym | [optional] 
 **Description** | Pointer to **string** | Description | [optional] 
-**Avatar** | Pointer to **string** | Avatar URL | [optional] 
 
 ## Methods
 
@@ -76,31 +75,6 @@ SetDescription sets Description field to given value.
 `func (o *UpdateProfileDataAttributes) HasDescription() bool`
 
 HasDescription returns a boolean if a field has been set.
-
-### GetAvatar
-
-`func (o *UpdateProfileDataAttributes) GetAvatar() string`
-
-GetAvatar returns the Avatar field if non-nil, zero value otherwise.
-
-### GetAvatarOk
-
-`func (o *UpdateProfileDataAttributes) GetAvatarOk() (*string, bool)`
-
-GetAvatarOk returns a tuple with the Avatar field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetAvatar
-
-`func (o *UpdateProfileDataAttributes) SetAvatar(v string)`
-
-SetAvatar sets Avatar field to given value.
-
-### HasAvatar
-
-`func (o *UpdateProfileDataAttributes) HasAvatar() bool`
-
-HasAvatar returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

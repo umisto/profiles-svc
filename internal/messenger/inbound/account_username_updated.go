@@ -10,26 +10,26 @@ import (
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
 )
 
-func (i Inbound) AccountDeleted(
+func (i Inbound) AccountUsernameUpdated(
 	ctx context.Context,
 	event inbox.Event,
 ) inbox.EventStatus {
-	var payload contracts.AccountDeletedPayload
+	var payload contracts.AccountUsernameUpdatedPayload
 	if err := json.Unmarshal(event.Payload, &payload); err != nil {
 		i.log.Errorf("bad payload for %s, key %s, id: %s, error: %v", event.Type, event.Key, event.ID, err)
 		return inbox.EventStatusFailed
 	}
 
-	if err := i.domain.DeleteProfile(ctx, payload.AccountID); err != nil {
+	if _, err := i.domain.UpdateProfileUsername(ctx, payload.AccountID, payload.NewUsername); err != nil {
 		switch {
 		case errors.Is(err, errx.ErrorInternal):
 			i.log.Errorf(
-				"failed to delete profile due to internal error, key %s, id: %s, error: %v",
+				"failed to update username due to internal error, key %s, id: %s, error: %v",
 				event.Key, event.ID, err,
 			)
 			return inbox.EventStatusPending
 		default:
-			i.log.Errorf("failed to delete profile, key %s, id: %s, error: %v", event.Key, event.ID, err)
+			i.log.Errorf("failed to update username, key %s, id: %s, error: %v", event.Key, event.ID, err)
 			return inbox.EventStatusFailed
 		}
 	}

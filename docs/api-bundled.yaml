@@ -163,52 +163,6 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Errors'
-  /profiles-svc/v1/profiles/me/username:
-    patch:
-      tags:
-        - Profiles
-      summary: Update profile username
-      description: |
-        Updates profile `username` by profile id. Returns 409 if the username is already taken.
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateProfileUsername'
-      responses:
-        '200':
-          description: Username updated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Profile'
-        '400':
-          description: Bad request (validation error / username is not allowed / invalid payload).
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        '404':
-          description: Profile for user does not exist.
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        '409':
-          description: Conflict (username is already taken).
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Errors'
-        '500':
-          description: Internal server error.
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Errors'
   '/profiles-svc/v1/profiles/{account_id}':
     get:
       tags:
@@ -333,10 +287,6 @@ components:
                 description:
                   type: string
                   description: Description
-                avatar:
-                  type: string
-                  format: uri
-                  description: Avatar URL
     UpdateProfile:
       type: object
       required:
@@ -366,10 +316,6 @@ components:
                 description:
                   type: string
                   description: Description
-                avatar:
-                  type: string
-                  format: uri
-                  description: Avatar URL
     UpdateProfileOfficial:
       type: object
       required:
@@ -398,34 +344,6 @@ components:
                 official:
                   type: boolean
                   description: official
-    UpdateProfileUsername:
-      type: object
-      required:
-        - data
-      properties:
-        data:
-          type: object
-          required:
-            - id
-            - type
-            - attributes
-          properties:
-            id:
-              type: string
-              format: uuid
-              description: account id
-            type:
-              type: string
-              enum:
-                - update_profile_username
-            attributes:
-              type: object
-              required:
-                - username
-              properties:
-                username:
-                  type: string
-                  description: username
     Profile:
       type: object
       required:
@@ -467,10 +385,6 @@ components:
         description:
           type: string
           description: Description
-        avatar:
-          type: string
-          format: uri
-          description: Avatar URL
         official:
           type: boolean
           description: Is Official Account

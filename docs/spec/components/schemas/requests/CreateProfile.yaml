@@ -30,7 +30,3 @@ properties:
           description:
             type: string
             description: "Description"
-          avatar:
-            type: string
-            format: uri
-            description: "Avatar URL"

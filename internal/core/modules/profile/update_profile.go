@@ -15,7 +15,6 @@ import (
 type UpdateParams struct {
 	Pseudonym   *string
 	Description *string
-	Avatar      *string
 }
 
 func (s Service) UpdateProfile(ctx context.Context, accountID uuid.UUID, input UpdateParams) (models.Profile, error) {
@@ -32,7 +31,7 @@ func (s Service) UpdateProfile(ctx context.Context, accountID uuid.UUID, input U
 			)
 		}
 
-		err = s.messanger.WriteProfileUpdated(ctx, profile)
+		err = s.messanger.WriteProfileUpdated(ctx, profile.AccountID, input, profile.UpdatedAt)
 		if err != nil {
 			return errx.ErrorInternal.Raise(
 				fmt.Errorf("sending profile updated event for user '%s': %w", accountID, err),
@@ -116,31 +115,18 @@ func (s Service) UpdateProfileUsername(ctx context.Context, accountID uuid.UUID,
 		return models.Profile{}, err
 	}
 
-	if err = s.repo.Transaction(ctx, func(ctx context.Context) error {
-		profile, err = s.repo.UpdateProfileUsername(ctx, accountID, username)
-		if err != nil {
-			switch {
-			case errors.Is(err, sql.ErrNoRows):
-				return errx.ErrorProfileNotFound.Raise(
-					fmt.Errorf("profile for user '%s' does not exist", accountID),
-				)
-			default:
-				return errx.ErrorInternal.Raise(
-					fmt.Errorf("updating username for user '%s': %w", accountID, err),
-				)
-			}
-		}
-
-		err = s.messanger.WriteProfileUsernameUpdated(ctx, profile)
-		if err != nil {
-			return errx.ErrorInternal.Raise(
-				fmt.Errorf("sending profile updated event for user '%s': %w", accountID, err),
+	profile, err = s.repo.UpdateProfileUsername(ctx, accountID, username)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return models.Profile{}, errx.ErrorProfileNotFound.Raise(
+				fmt.Errorf("profile for user '%s' does not exist", accountID),
+			)
+		default:
+			return models.Profile{}, errx.ErrorInternal.Raise(
+				fmt.Errorf("updating username for user '%s': %w", accountID, err),
 			)
 		}
-
-		return nil
-	}); err != nil {
-		return models.Profile{}, err
 	}
 
 	return profile, nil

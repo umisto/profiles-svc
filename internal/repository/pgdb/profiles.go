@@ -13,7 +13,7 @@ import (
 )
 
 const profilesTable = "profiles"
-const ProfilesColumns = "account_id, username, official, pseudonym, description, avatar, created_at, updated_at"
+const ProfilesColumns = "account_id, username, official, pseudonym, description, created_at, updated_at"
 
 type Profile struct {
 	AccountID   uuid.UUID `db:"account_id"`
@@ -21,7 +21,6 @@ type Profile struct {
 	Official    bool      `db:"official"`
 	Pseudonym   *string   `db:"pseudonym"`
 	Description *string   `db:"description"`
-	Avatar      *string   `db:"avatar"`
 	CreatedAt   time.Time `db:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at"`
 }
@@ -33,7 +32,6 @@ func (p Profile) scan(row sq.RowScanner) error {
 		&p.Official,
 		&p.Pseudonym,
 		&p.Description,
-		&p.Avatar,
 		&p.CreatedAt,
 		&p.UpdatedAt,
 	)
@@ -70,7 +68,6 @@ type InsertProfileParams struct {
 	Official    bool
 	Pseudonym   *string
 	Description *string
-	Avatar      *string
 }
 
 func (q ProfilesQ) Insert(ctx context.Context, input InsertProfileParams) (Profile, error) {
@@ -80,12 +77,11 @@ func (q ProfilesQ) Insert(ctx context.Context, input InsertProfileParams) (Profi
 		"official":    input.Official,
 		"pseudonym":   input.Pseudonym,
 		"description": input.Description,
-		"avatar":      input.Avatar,
 	}
 
 	query, args, err := q.inserter.
 		SetMap(values).
-		Suffix("RETURNING account_id, username, official, pseudonym, description, avatar, created_at, updated_at").
+		Suffix("RETURNING account_id, username, official, pseudonym, description, created_at, updated_at").
 		ToSql()
 	if err != nil {
 		return Profile{}, fmt.Errorf("building insert query for %s: %w", profilesTable, err)
@@ -139,7 +135,6 @@ func (q ProfilesQ) UpdateOne(ctx context.Context) (Profile, error) {
 		&p.Official,
 		&p.Pseudonym,
 		&p.Description,
-		&p.Avatar,
 		&p.CreatedAt,
 		&p.UpdatedAt,
 	)
@@ -181,13 +176,6 @@ func (q ProfilesQ) UpdateDescription(description string) ProfilesQ {
 	return q
 }
 
-func (q ProfilesQ) UpdateAvatar(avatar string) ProfilesQ {
-	if avatar == "" {
-		q.updater = q.updater.Set("avatar", nil)
-	}
-	return q
-}
-
 func (q ProfilesQ) Get(ctx context.Context) (Profile, error) {
 	query, args, err := q.selector.Limit(1).ToSql()
 	if err != nil {
@@ -197,16 +185,7 @@ func (q ProfilesQ) Get(ctx context.Context) (Profile, error) {
 	row := q.db.QueryRowContext(ctx, query, args...)
 
 	var p Profile
-	err = row.Scan(
-		&p.AccountID,
-		&p.Username,
-		&p.Official,
-		&p.Pseudonym,
-		&p.Description,
-		&p.Avatar,
-		&p.CreatedAt,
-		&p.UpdatedAt,
-	)
+	err = p.scan(row)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Profile{}, nil
@@ -232,16 +211,7 @@ func (q ProfilesQ) Select(ctx context.Context) ([]Profile, error) {
 	var out []Profile
 	for rows.Next() {
 		var p Profile
-		err = rows.Scan(
-			&p.AccountID,
-			&p.Username,
-			&p.Official,
-			&p.Pseudonym,
-			&p.Description,
-			&p.Avatar,
-			&p.CreatedAt,
-			&p.UpdatedAt,
-		)
+		err = p.scan(rows)
 		if err != nil {
 			return nil, fmt.Errorf("scanning profile: %w", err)
 		}

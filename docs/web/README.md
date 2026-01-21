@@ -83,7 +83,6 @@ Class | Method | HTTP request | Description
 *ProfilesAPI* | [**ProfilesSvcV1ProfilesGet**](docs/ProfilesAPI.md#profilessvcv1profilesget) | **Get** /profiles-svc/v1/profiles/ | Filter profiles
 *ProfilesAPI* | [**ProfilesSvcV1ProfilesMeGet**](docs/ProfilesAPI.md#profilessvcv1profilesmeget) | **Get** /profiles-svc/v1/profiles/me/ | Get my profile
 *ProfilesAPI* | [**ProfilesSvcV1ProfilesMePut**](docs/ProfilesAPI.md#profilessvcv1profilesmeput) | **Put** /profiles-svc/v1/profiles/me/ | Update my profile
-*ProfilesAPI* | [**ProfilesSvcV1ProfilesMeUsernamePatch**](docs/ProfilesAPI.md#profilessvcv1profilesmeusernamepatch) | **Patch** /profiles-svc/v1/profiles/me/username | Update profile username
 *ProfilesAPI* | [**ProfilesSvcV1ProfilesUUsernameGet**](docs/ProfilesAPI.md#profilessvcv1profilesuusernameget) | **Get** /profiles-svc/v1/profiles/u/{username} | Get profile by username
 
 
@@ -105,9 +104,6 @@ Class | Method | HTTP request | Description
  - [UpdateProfileOfficial](docs/UpdateProfileOfficial.md)
  - [UpdateProfileOfficialData](docs/UpdateProfileOfficialData.md)
  - [UpdateProfileOfficialDataAttributes](docs/UpdateProfileOfficialDataAttributes.md)
- - [UpdateProfileUsername](docs/UpdateProfileUsername.md)
- - [UpdateProfileUsernameData](docs/UpdateProfileUsernameData.md)
- - [UpdateProfileUsernameDataAttributes](docs/UpdateProfileUsernameDataAttributes.md)
 
 
 ## Documentation For Authorization

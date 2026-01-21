@@ -8,13 +8,26 @@ import (
 
 const AccountsTopicV1 = "accounts.v1"
 
+const AccountCreatedEvent = "account.created"
+
+type AccountCreatedPayload struct {
+	AccountID uuid.UUID `json:"account_id"`
+	Username  string    `json:"username"`
+
+	CreatedAt time.Time `json:"created_at"`
+}
+
+const AccountUsernameUpdatedEvent = "account.username.updated"
+
+type AccountUsernameUpdatedPayload struct {
+	AccountID   uuid.UUID `json:"account_id"`
+	NewUsername string    `json:"new_username"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
+
 const AccountDeletedEvent = "account.deleted"
 
 type AccountDeletedPayload struct {
-	Data      AccountDeletedPayloadData `json:"data"`
-	Timestamp time.Time                 `json:"timestamp"`
-}
-
-type AccountDeletedPayloadData struct {
 	AccountID uuid.UUID `json:"account_id"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
