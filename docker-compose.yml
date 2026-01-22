@@ -1,5 +1,5 @@
 services:
-  profile-svc:
+  profiles-svc:
     build: .
     container_name: profile-svc
     environment:
@@ -9,7 +9,7 @@ services:
     networks:
       - chains-net
 
-  profile-svc-postgres:
+  profiles-svc-postgres:
     image: postgres:15
     container_name: profile-svc-postgres
     environment:
@@ -31,7 +31,7 @@ services:
     volumes:
       - ./docs:/docs:ro
     ports:
-      - "5555:8080"
+      - "5002:8080"
     networks:
       - chains-net
 

@@ -7,39 +7,21 @@ import (
 
 	"github.com/netbill/evebox/box/inbox"
 	"github.com/netbill/evebox/consumer"
-	"github.com/netbill/logium"
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
 )
 
-type Outbound interface {
+type handlers interface {
 	AccountDeleted(
+		ctx context.Context,
+		event inbox.Event,
+	) inbox.EventStatus
+	AccountUsernameUpdated(
 		ctx context.Context,
 		event inbox.Event,
 	) inbox.EventStatus
 }
 
-type Consumer struct {
-	addr     []string
-	log      logium.Logger
-	inbox    inbox.Box
-	handlers Outbound
-}
-
-func NewConsumer(
-	log logium.Logger,
-	inbox inbox.Box,
-	handlers Outbound,
-	addr ...string,
-) Consumer {
-	return Consumer{
-		addr:     addr,
-		log:      log,
-		inbox:    inbox,
-		handlers: handlers,
-	}
-}
-
-func (c Consumer) Run(ctx context.Context) {
+func (m Messenger) RunConsumer(ctx context.Context, handlers handlers) {
 	wg := &sync.WaitGroup{}
 	run := func(f func()) {
 		wg.Add(1)
@@ -49,30 +31,33 @@ func (c Consumer) Run(ctx context.Context) {
 		}()
 	}
 
-	accountConsumer := consumer.New(c.log, "profiles-svc-account-consumer", c.inbox)
+	accountConsumer := consumer.New(m.log, m.db, "auth-svc-org-consumer", consumer.OnUnknownDoNothing, m.addr...)
 
-	accountConsumer.Handle(contracts.AccountDeletedEvent, c.handlers.AccountDeleted)
+	accountConsumer.Handle(contracts.AccountDeletedEvent, handlers.AccountDeleted)
+	accountConsumer.Handle(contracts.AccountUsernameUpdatedEvent, handlers.AccountUsernameUpdated)
 
-	inboxer1 := consumer.NewInboxWorker(c.log, c.inbox, consumer.InboxConfigWorker{
+	inboxer1 := consumer.NewInboxer(m.log, m.db, consumer.ConfigInboxer{
 		Name:       "profiles-svc-inbox-worker-1",
 		BatchSize:  10,
 		RetryDelay: 1 * time.Minute,
 		MinSleep:   100 * time.Millisecond,
 		MaxSleep:   1 * time.Second,
 	})
-	inboxer1.Handle(contracts.AccountDeletedEvent, c.handlers.AccountDeleted)
+	inboxer1.Handle(contracts.AccountDeletedEvent, handlers.AccountDeleted)
+	inboxer1.Handle(contracts.AccountUsernameUpdatedEvent, handlers.AccountUsernameUpdated)
 
-	inboxer2 := consumer.NewInboxWorker(c.log, c.inbox, consumer.InboxConfigWorker{
+	inboxer2 := consumer.NewInboxer(m.log, m.db, consumer.ConfigInboxer{
 		Name:       "profiles-svc-inbox-worker-2",
 		BatchSize:  10,
 		RetryDelay: 1 * time.Minute,
 		MinSleep:   100 * time.Millisecond,
 		MaxSleep:   1 * time.Second,
 	})
-	inboxer2.Handle(contracts.AccountDeletedEvent, c.handlers.AccountDeleted)
+	inboxer2.Handle(contracts.AccountDeletedEvent, handlers.AccountDeleted)
+	inboxer2.Handle(contracts.AccountUsernameUpdatedEvent, handlers.AccountUsernameUpdated)
 
 	run(func() {
-		accountConsumer.Run(ctx, contracts.ProfilesSvcGroup, contracts.AccountsTopicV1, c.addr...)
+		accountConsumer.Run(ctx, contracts.ProfilesSvcGroup, contracts.AccountsTopicV1, m.addr...)
 	})
 
 	run(func() {

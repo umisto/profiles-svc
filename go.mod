@@ -10,7 +10,7 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
-	github.com/netbill/evebox v0.2.8
+	github.com/netbill/evebox v0.3.2
 	github.com/netbill/logium v0.1.0
 	github.com/netbill/pgx v0.1.0
 	github.com/netbill/restkit v0.1.5
@@ -46,5 +46,3 @@ require (
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 )
-
-//replace github.com/netbill/evebox => /home/trpdjke/go/src/github.com/netbill/evebox

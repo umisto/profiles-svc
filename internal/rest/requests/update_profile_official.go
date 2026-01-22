@@ -28,8 +28,8 @@ func UpdateProfileOfficial(r *http.Request) (req resources.UpdateProfileOfficial
 		"data/attributes": validation.Validate(req.Data.Attributes, validation.Required),
 	}
 
-	if chi.URLParam(r, "user_id") == req.Data.Id.String() {
-		errs["data/id"] = fmt.Errorf("query user_id and body data/id do not match")
+	if chi.URLParam(r, "account_id") == req.Data.Id.String() {
+		errs["data/id"] = fmt.Errorf("query account_id and body data/id do not match")
 	}
 
 	return req, errs.Filter()

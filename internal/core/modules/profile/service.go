@@ -2,7 +2,6 @@ package profile
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/netbill/profiles-svc/internal/core/models"
@@ -44,12 +43,7 @@ type repo interface {
 }
 
 type messanger interface {
-	WriteProfileUpdated(
-		ctx context.Context,
-		accountID uuid.UUID,
-		params UpdateParams,
-		updatedAt time.Time,
-	) error
-
-	WriteProfileOfficialUpdated(ctx context.Context, profile models.Profile) error
+	WriteProfileCreated(ctx context.Context, profile models.Profile) error
+	WriteProfileUpdated(ctx context.Context, profile models.Profile) error
+	WriteProfileDeleted(ctx context.Context, accountID uuid.UUID) error
 }

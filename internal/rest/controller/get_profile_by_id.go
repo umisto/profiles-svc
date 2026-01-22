@@ -15,11 +15,11 @@ import (
 )
 
 func (s Service) GetProfileByID(w http.ResponseWriter, r *http.Request) {
-	userID, err := uuid.Parse(chi.URLParam(r, "user_id"))
+	userID, err := uuid.Parse(chi.URLParam(r, "account_id"))
 	if err != nil {
-		s.log.WithError(err).Errorf("invalid user id")
+		s.log.WithError(err).Errorf("invalid account id")
 		ape.RenderErr(w, problems.BadRequest(validation.Errors{
-			"query": fmt.Errorf("invalid user id: %s", chi.URLParam(r, "user_id")),
+			"query": fmt.Errorf("invalid account id: %s", chi.URLParam(r, "account_id")),
 		})...)
 
 		return
