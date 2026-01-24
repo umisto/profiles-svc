@@ -13,16 +13,17 @@ import (
 )
 
 const profilesTable = "profiles"
-const ProfilesColumns = "account_id, username, official, pseudonym, description, created_at, updated_at"
+const ProfilesColumns = "account_id, username, official, pseudonym, description, avatar_url, created_at, updated_at"
 
 type Profile struct {
-	AccountID   uuid.UUID `db:"account_id"`
-	Username    string    `db:"username"`
-	Official    bool      `db:"official"`
-	Pseudonym   *string   `db:"pseudonym"`
-	Description *string   `db:"description"`
-	CreatedAt   time.Time `db:"created_at"`
-	UpdatedAt   time.Time `db:"updated_at"`
+	AccountID   uuid.UUID      `db:"account_id"`
+	Username    string         `db:"username"`
+	Official    bool           `db:"official"`
+	Pseudonym   sql.NullString `db:"pseudonym"`
+	Description sql.NullString `db:"description"`
+	AvatarURL   sql.NullString `db:"avatar_url"`
+	CreatedAt   time.Time      `db:"created_at"`
+	UpdatedAt   time.Time      `db:"updated_at"`
 }
 
 func (p Profile) scan(row sq.RowScanner) error {
@@ -32,6 +33,7 @@ func (p Profile) scan(row sq.RowScanner) error {
 		&p.Official,
 		&p.Pseudonym,
 		&p.Description,
+		&p.AvatarURL,
 		&p.CreatedAt,
 		&p.UpdatedAt,
 	)
@@ -66,8 +68,8 @@ type InsertProfileParams struct {
 	AccountID   uuid.UUID
 	Username    string
 	Official    bool
-	Pseudonym   *string
-	Description *string
+	Pseudonym   sql.NullString
+	Description sql.NullString
 }
 
 func (q ProfilesQ) Insert(ctx context.Context, input InsertProfileParams) (Profile, error) {
@@ -129,15 +131,7 @@ func (q ProfilesQ) UpdateOne(ctx context.Context) (Profile, error) {
 	row := q.db.QueryRowContext(ctx, query, args...)
 
 	var p Profile
-	err = row.Scan(
-		&p.AccountID,
-		&p.Username,
-		&p.Official,
-		&p.Pseudonym,
-		&p.Description,
-		&p.CreatedAt,
-		&p.UpdatedAt,
-	)
+	err = p.scan(row)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return Profile{}, nil
@@ -158,21 +152,18 @@ func (q ProfilesQ) UpdateOfficial(official bool) ProfilesQ {
 	return q
 }
 
-func (q ProfilesQ) UpdatePseudonym(pseudonym string) ProfilesQ {
-	if pseudonym == "" {
-		q.updater = q.updater.Set("pseudonym", nil)
-	} else {
-		q.updater = q.updater.Set("pseudonym", pseudonym)
-	}
+func (q ProfilesQ) UpdatePseudonym(nullString sql.NullString) ProfilesQ {
+	q.updater = q.updater.Set("pseudonym", nullString)
 	return q
 }
 
-func (q ProfilesQ) UpdateDescription(description string) ProfilesQ {
-	if description == "" {
-		q.updater = q.updater.Set("description", nil)
-	} else {
-		q.updater = q.updater.Set("description", description)
-	}
+func (q ProfilesQ) UpdateDescription(description sql.NullString) ProfilesQ {
+	q.updater = q.updater.Set("description", description)
+	return q
+}
+
+func (q ProfilesQ) UpdateAvatarURL(avatarURL sql.NullString) ProfilesQ {
+	q.updater = q.updater.Set("avatar_url", avatarURL)
 	return q
 }
 

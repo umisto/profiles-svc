@@ -12,7 +12,7 @@ type Profile struct {
 	Official    bool      `json:"official"`
 	Pseudonym   *string   `json:"pseudonym,omitempty"`
 	Description *string   `json:"description,omitempty"`
-	Avatar      *string   `json:"avatar,omitempty"`
+	AvatarURL   *string   `json:"avatar_url,omitempty"`
 
 	UpdatedAt time.Time `json:"updated_at"`
 	CreatedAt time.Time `json:"created_at"`
@@ -20,4 +20,10 @@ type Profile struct {
 
 func (e Profile) IsNil() bool {
 	return e.AccountID == uuid.Nil
+}
+
+type UpdateProfileAvatar struct {
+	UploadURL   string `json:"upload_url"`
+	GetURL      string `json:"get_url"`
+	UploadToken string `json:"upload_token"`
 }

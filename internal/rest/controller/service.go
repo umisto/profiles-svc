@@ -23,6 +23,23 @@ type domain interface {
 	UpdateProfile(ctx context.Context, accountID uuid.UUID, input profile.UpdateParams) (models.Profile, error)
 	UpdateProfileOfficial(ctx context.Context, accountID uuid.UUID, official bool) (models.Profile, error)
 	UpdateProfileUsername(ctx context.Context, accountID uuid.UUID, username string) (models.Profile, error)
+
+	GetPreloadLinkForUpdateAvatar(
+		ctx context.Context,
+		accountID uuid.UUID,
+	) (models.UpdateProfileAvatar, error)
+	CancelUpdateAvatar(
+		ctx context.Context,
+		accountID, sessionID uuid.UUID,
+	) (models.Profile, error)
+	AcceptUpdateAvatar(
+		ctx context.Context,
+		accountID, sessionID uuid.UUID,
+	) (models.Profile, error)
+	DeleteProfileAvatar(
+		ctx context.Context,
+		accountID uuid.UUID,
+	) (models.Profile, error)
 }
 
 type Service struct {

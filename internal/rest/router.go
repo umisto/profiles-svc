@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/netbill/logium"
 	"github.com/netbill/profiles-svc/internal"
-	"github.com/netbill/restkit/auth/roles"
+	"github.com/netbill/restkit/tokens/roles"
 )
 
 type Handlers interface {
@@ -22,12 +22,17 @@ type Handlers interface {
 	FilterProfiles(w http.ResponseWriter, r *http.Request)
 
 	UpdateMyProfile(w http.ResponseWriter, r *http.Request)
-
 	UpdateProfileOfficial(w http.ResponseWriter, r *http.Request)
+
+	GetPreloadLinkForUpdateAvatar(w http.ResponseWriter, r *http.Request)
+	AcceptUpdateAvatar(w http.ResponseWriter, r *http.Request)
+	CancelUpdateAvatar(w http.ResponseWriter, r *http.Request)
+	DeleteMyProfileAvatar(w http.ResponseWriter, r *http.Request)
 }
 type Middlewares interface {
-	Auth() func(http.Handler) http.Handler
-	RoleGrant(allowedRoles map[string]bool) func(http.Handler) http.Handler
+	AccountAuth() func(http.Handler) http.Handler
+	AccountRolesGrant(allowedRoles map[string]bool) func(http.Handler) http.Handler
+	UploadFiles(scope string) func(http.Handler) http.Handler
 }
 
 type Service struct {
@@ -49,11 +54,12 @@ func New(
 }
 
 func (s *Service) Run(ctx context.Context, cfg internal.Config) {
-	auth := s.middlewares.Auth()
-	sysmoder := s.middlewares.RoleGrant(map[string]bool{
+	auth := s.middlewares.AccountAuth()
+	sysmoder := s.middlewares.AccountRolesGrant(map[string]bool{
 		roles.SystemAdmin: true,
 		roles.SystemModer: true,
 	})
+	uploadProfileAvatar := s.middlewares.UploadFiles("upload_profile_avatar")
 
 	r := chi.NewRouter()
 
@@ -77,6 +83,16 @@ func (s *Service) Run(ctx context.Context, cfg internal.Config) {
 				r.With(auth).Route("/me", func(r chi.Router) {
 					r.Get("/", s.handlers.GetMyProfile)
 					r.Put("/", s.handlers.UpdateMyProfile)
+					r.Route("/avatar", func(r chi.Router) {
+						r.Route("/upload", func(r chi.Router) {
+							r.Get("/", s.handlers.GetPreloadLinkForUpdateAvatar)
+
+							r.With(uploadProfileAvatar).Post("/", s.handlers.AcceptUpdateAvatar)
+							r.With(uploadProfileAvatar).Delete("/", s.handlers.CancelUpdateAvatar)
+						})
+
+						r.Delete("/", s.handlers.DeleteMyProfileAvatar)
+					})
 				})
 
 				r.Route("/{account_id}", func(r chi.Router) {

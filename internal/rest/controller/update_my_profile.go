@@ -8,7 +8,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/netbill/profiles-svc/internal/core/errx"
 	"github.com/netbill/profiles-svc/internal/core/modules/profile"
-	"github.com/netbill/profiles-svc/internal/rest"
+	"github.com/netbill/profiles-svc/internal/rest/middlewares"
 	"github.com/netbill/restkit/ape"
 	"github.com/netbill/restkit/ape/problems"
 
@@ -17,7 +17,7 @@ import (
 )
 
 func (s Service) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
-	initiator, err := rest.AccountData(r.Context())
+	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
 		s.log.WithError(err).Error("failed to get user from context")
 		ape.RenderErr(w, problems.Unauthorized("failed to get user from context"))
@@ -33,18 +33,18 @@ func (s Service) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Data.Id != initiator.ID {
+	if req.Data.Id != initiator.AccountID {
 		s.log.WithError(err).Errorf("id in body and initiator id mismatch fir update My profile request")
 		ape.RenderErr(w, problems.BadRequest(validation.Errors{
 			"id": fmt.Errorf(
 				"id in body: %s and initiator id: %s mismatch fir update My profile request",
 				req.Data.Id,
-				initiator.ID,
+				initiator.AccountID,
 			),
 		})...)
 	}
 
-	res, err := s.domain.UpdateProfile(r.Context(), initiator.ID, profile.UpdateParams{
+	res, err := s.domain.UpdateProfile(r.Context(), initiator.AccountID, profile.UpdateParams{
 		Pseudonym:   req.Data.Attributes.Pseudonym,
 		Description: req.Data.Attributes.Description,
 	})

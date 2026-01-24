@@ -38,29 +38,49 @@ type KafkaConfig struct {
 	Brokers []string `mapstructure:"brokers"`
 }
 
-type JWTConfig struct {
-	User struct {
-		AccessToken struct {
-			SecretKey     string        `mapstructure:"secret_key"`
-			TokenLifetime time.Duration `mapstructure:"token_lifetime"`
-		} `mapstructure:"access_token"`
-	} `mapstructure:"user"`
+type AuthConfig struct {
+	Account struct {
+		Token struct {
+			Access struct {
+				SecretKey string `mapstructure:"secret_key"`
+			} `mapstructure:"access"`
+		} `mapstructure:"token"`
+	} `mapstructure:"account"`
 }
 
-type SwaggerConfig struct {
-	Enabled bool   `mapstructure:"enabled"`
-	URL     string `mapstructure:"url"`
-	Port    string `mapstructure:"port"`
+type S3Config struct {
+	AWS struct {
+		BucketName      string `mapstructure:"bucket_name"`
+		Region          string `mapstructure:"region"`
+		AccessKeyID     string `mapstructure:"access_key_id"`
+		SecretAccessKey string `mapstructure:"secret_access_key"`
+		SessionToken    string `mapstructure:"session_token"`
+	} `mapstructure:"aws"`
+
+	Upload struct {
+		Token struct {
+			SecretKey string `mapstructure:"secret_key"`
+		} `mapstructure:"token"`
+
+		Profile struct {
+			Avatar struct {
+				MaxLength         int64         `mapstructure:"max_length"`
+				AllowedExtensions []string      `mapstructure:"allowed_extensions"`
+				UploadTokenScope  string        `mapstructure:"upload_token_scope"`
+				UploadTokenTTL    time.Duration `mapstructure:"upload_token_ttl"`
+			} `mapstructure:"avatar"`
+		} `mapstructure:"profile"`
+	} `mapstructure:"upload"`
 }
 
 type Config struct {
 	Service  ServiceConfig  `mapstructure:"service"`
 	Log      LogConfig      `mapstructure:"log"`
 	Rest     RestConfig     `mapstructure:"rest"`
-	JWT      JWTConfig      `mapstructure:"jwt"`
+	Auth     AuthConfig     `mapstructure:"auth"`
 	Kafka    KafkaConfig    `mapstructure:"kafka"`
 	Database DatabaseConfig `mapstructure:"database"`
-	Swagger  SwaggerConfig  `mapstructure:"swagger"`
+	S3       S3Config       `mapstructure:"s3"`
 }
 
 func LoadConfig() (Config, error) {

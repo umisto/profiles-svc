@@ -56,10 +56,30 @@ func (r Repository) UpdateProfile(
 	q := r.profilesQ(ctx).FilterAccountID(accountID)
 
 	if input.Pseudonym != nil {
-		q = q.UpdatePseudonym(*input.Pseudonym)
+		if *input.Pseudonym == "" {
+			q = q.UpdatePseudonym(sql.NullString{
+				String: "",
+				Valid:  false,
+			})
+		} else {
+			q = q.UpdatePseudonym(sql.NullString{
+				String: *input.Pseudonym,
+				Valid:  true,
+			})
+		}
 	}
 	if input.Description != nil {
-		q = q.UpdateDescription(*input.Description)
+		if *input.Description == "" {
+			q = q.UpdateDescription(sql.NullString{
+				String: "",
+				Valid:  false,
+			})
+		} else {
+			q = q.UpdateDescription(sql.NullString{
+				String: *input.Description,
+				Valid:  true,
+			})
+		}
 	}
 
 	res, err := q.UpdateOne(ctx)
@@ -94,6 +114,43 @@ func (r Repository) UpdateProfileOfficial(
 	res, err := r.profilesQ(ctx).
 		FilterAccountID(accountID).
 		UpdateOfficial(official).
+		UpdateOne(ctx)
+	if err != nil {
+		return models.Profile{}, err
+	}
+
+	return res.ToModel(), nil
+}
+
+func (r Repository) UpdateProfileAvatar(
+	ctx context.Context,
+	accountID uuid.UUID,
+	avatarURL string,
+) (models.Profile, error) {
+	res, err := r.profilesQ(ctx).
+		FilterAccountID(accountID).
+		UpdateAvatarURL(sql.NullString{
+			String: avatarURL,
+			Valid:  true,
+		}).
+		UpdateOne(ctx)
+	if err != nil {
+		return models.Profile{}, err
+	}
+
+	return res.ToModel(), nil
+}
+
+func (r Repository) DeleteProfileAvatar(
+	ctx context.Context,
+	accountID uuid.UUID,
+) (models.Profile, error) {
+	res, err := r.profilesQ(ctx).
+		FilterAccountID(accountID).
+		UpdateAvatarURL(sql.NullString{
+			String: "",
+			Valid:  false,
+		}).
 		UpdateOne(ctx)
 	if err != nil {
 		return models.Profile{}, err

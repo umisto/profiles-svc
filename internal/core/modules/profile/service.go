@@ -11,12 +11,16 @@ import (
 type Service struct {
 	repo      repo
 	messanger messanger
+	token     token
+	bucket    bucket
 }
 
-func New(db repo, messanger messanger) Service {
+func New(db repo, messanger messanger, token token, bucket bucket) Service {
 	return Service{
 		repo:      db,
 		messanger: messanger,
+		token:     token,
+		bucket:    bucket,
 	}
 }
 
@@ -27,6 +31,8 @@ type repo interface {
 	GetProfileByUsername(ctx context.Context, username string) (models.Profile, error)
 
 	UpdateProfile(ctx context.Context, userID uuid.UUID, params UpdateParams) (models.Profile, error)
+	UpdateProfileAvatar(ctx context.Context, userID uuid.UUID, avatarURL string) (models.Profile, error)
+	DeleteProfileAvatar(ctx context.Context, userID uuid.UUID) (models.Profile, error)
 
 	UpdateProfileUsername(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error)
 	UpdateProfileOfficial(ctx context.Context, userID uuid.UUID, official bool) (models.Profile, error)
@@ -46,4 +52,28 @@ type messanger interface {
 	WriteProfileCreated(ctx context.Context, profile models.Profile) error
 	WriteProfileUpdated(ctx context.Context, profile models.Profile) error
 	WriteProfileDeleted(ctx context.Context, accountID uuid.UUID) error
+}
+
+type token interface {
+	NewUploadProfileAvatarToken(
+		sessionID uuid.UUID,
+	) (string, error)
+}
+
+type bucket interface {
+	GetPreloadLinkForUpdateProfileAvatar(
+		ctx context.Context,
+		accountID, sessionID uuid.UUID,
+	) (uploadURL, getURL string, err error)
+
+	CancelUpdateProfileAvatar(
+		ctx context.Context,
+		accountID, sessionID uuid.UUID,
+	) error
+
+	CheckProfileAvatarExtension(link string) (bool, error)
+	AcceptUpdateProfileAvatar(
+		ctx context.Context,
+		accountID, sessionID uuid.UUID,
+	) (string, error)
 }

@@ -17,16 +17,34 @@ database:
   sql:
     url: "postgresql://postgres:postgres@localhost:7002/postgres?sslmode=disable"
 
-oauth:
-  google:
-    client_id: "client_id"
-    client_secret: "megasupersecret"
-    redirect_url: "http://localhost:8001/v1/sso/google/login/callback"
+auth:
+  account:
+    token:
+      access:
+        secret_key: "UnG06MAU2i1Mvqf8" #example
 
-jwt:
-  user:
-    access_token:
-      secret_key: "UnG06MAU2i1Mvqf8" #example
+s3:
+  aws:
+    region: "us-east-1"
+    bucket_name: "my-app-bucket"
+    access_key_id: "your-access-key-id"
+    secret_access_key: "your-secret-access-key"
+    session_token: "your-session-token"
+  upload:
+    token:
+      secret_key: "jdweoiqjweoiqjweoiqjweoiqjweoiqjweoiqjw" #example
+
+    profile:
+      avatar:
+        max_size: 5 << 20 # 5 MB
+        allowed_types:
+          - "jpeg"
+          - "jpg"
+          - "png"
+          - "gif"
+          - "img"
+        upload_token_ttl: 15m # 15 minutes
+        upload_token_scope: "upload_profile_avatar"
 
 kafka:
   brokers:
