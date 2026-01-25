@@ -4,7 +4,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/core/models"
 )
 
-func (p Profile) ToModel() models.Profile {
+func (p *Profile) ToModel() models.Profile {
 	profile := models.Profile{
 		AccountID: p.AccountID,
 		Username:  p.Username,

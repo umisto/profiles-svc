@@ -8,6 +8,7 @@ import (
 	"github.com/netbill/evebox/box/inbox"
 	"github.com/netbill/profiles-svc/internal/core/errx"
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
+	"github.com/sirupsen/logrus"
 )
 
 func (i Inbound) AccountCreated(
@@ -20,16 +21,18 @@ func (i Inbound) AccountCreated(
 		return inbox.EventStatusFailed
 	}
 
+	logrus.Debugf("handling account created event for account ID %s", payload.AccountID)
+
 	if _, err := i.domain.CreateProfile(ctx, payload.AccountID, payload.Username); err != nil {
 		switch {
 		case errors.Is(err, errx.ErrorInternal):
 			i.log.Errorf(
-				"failed to upsert profile due to internal error, key %s, id: %s, error: %v",
+				"failed to create profile due to internal error, key %s, id: %s, error: %v",
 				event.Key, event.ID, err,
 			)
 			return inbox.EventStatusPending
 		default:
-			i.log.Errorf("failed to upsert profile, key %s, id: %s, error: %v", event.Key, event.ID, err)
+			i.log.Errorf("failed to create profile, key %s, id: %s, error: %v", event.Key, event.ID, err)
 			return inbox.EventStatusFailed
 		}
 	}

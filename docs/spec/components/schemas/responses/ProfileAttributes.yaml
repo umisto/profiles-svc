@@ -17,6 +17,10 @@ properties:
   official:
     type: boolean
     description: "Is Official Account"
+  avatar_url:
+    type: string
+    format: uri
+    description: "Avatar URL"
   updated_at:
     type: string
     format: date-time

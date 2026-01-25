@@ -54,7 +54,6 @@ type S3Config struct {
 		Region          string `mapstructure:"region"`
 		AccessKeyID     string `mapstructure:"access_key_id"`
 		SecretAccessKey string `mapstructure:"secret_access_key"`
-		SessionToken    string `mapstructure:"session_token"`
 	} `mapstructure:"aws"`
 
 	Upload struct {

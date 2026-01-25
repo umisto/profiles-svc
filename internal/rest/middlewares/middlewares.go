@@ -41,5 +41,5 @@ func (s Service) AccountRolesGrant(
 }
 
 func (s Service) ConfirmUploadFiles(scope string) func(next http.Handler) http.Handler {
-	return mdlv.ConfirmUploadFiles(s.log, uploadFilesCtxKey, scope, s.uploadFilesSK)
+	return mdlv.ConfirmUploadFiles(s.log, uploadFilesCtxKey, s.uploadFilesSK, scope)
 }

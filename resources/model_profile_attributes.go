@@ -30,6 +30,8 @@ type ProfileAttributes struct {
 	Description *string `json:"description,omitempty"`
 	// Is Official Account
 	Official bool `json:"official"`
+	// Avatar URL
+	AvatarUrl *string `json:"avatar_url,omitempty"`
 	// Updated At
 	UpdatedAt time.Time `json:"updated_at"`
 	// Created At
@@ -171,6 +173,38 @@ func (o *ProfileAttributes) SetOfficial(v bool) {
 	o.Official = v
 }
 
+// GetAvatarUrl returns the AvatarUrl field value if set, zero value otherwise.
+func (o *ProfileAttributes) GetAvatarUrl() string {
+	if o == nil || IsNil(o.AvatarUrl) {
+		var ret string
+		return ret
+	}
+	return *o.AvatarUrl
+}
+
+// GetAvatarUrlOk returns a tuple with the AvatarUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ProfileAttributes) GetAvatarUrlOk() (*string, bool) {
+	if o == nil || IsNil(o.AvatarUrl) {
+		return nil, false
+	}
+	return o.AvatarUrl, true
+}
+
+// HasAvatarUrl returns a boolean if a field has been set.
+func (o *ProfileAttributes) HasAvatarUrl() bool {
+	if o != nil && !IsNil(o.AvatarUrl) {
+		return true
+	}
+
+	return false
+}
+
+// SetAvatarUrl gets a reference to the given string and assigns it to the AvatarUrl field.
+func (o *ProfileAttributes) SetAvatarUrl(v string) {
+	o.AvatarUrl = &v
+}
+
 // GetUpdatedAt returns the UpdatedAt field value
 func (o *ProfileAttributes) GetUpdatedAt() time.Time {
 	if o == nil {
@@ -237,6 +271,9 @@ func (o ProfileAttributes) ToMap() (map[string]interface{}, error) {
 		toSerialize["description"] = o.Description
 	}
 	toSerialize["official"] = o.Official
+	if !IsNil(o.AvatarUrl) {
+		toSerialize["avatar_url"] = o.AvatarUrl
+	}
 	toSerialize["updated_at"] = o.UpdatedAt
 	toSerialize["created_at"] = o.CreatedAt
 	return toSerialize, nil

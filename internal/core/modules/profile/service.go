@@ -25,7 +25,7 @@ func New(db repo, messanger messanger, token token, bucket bucket) Service {
 }
 
 type repo interface {
-	CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error)
+	InsertProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error)
 
 	GetProfileByAccountID(ctx context.Context, userID uuid.UUID) (models.Profile, error)
 	GetProfileByUsername(ctx context.Context, username string) (models.Profile, error)

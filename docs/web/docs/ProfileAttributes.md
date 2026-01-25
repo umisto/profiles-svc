@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **Pseudonym** | Pointer to **string** | Pseudonym | [optional] 
 **Description** | Pointer to **string** | Description | [optional] 
 **Official** | **bool** | Is Official Account | 
+**AvatarUrl** | Pointer to **string** | Avatar URL | [optional] 
 **UpdatedAt** | **time.Time** | Updated At | 
 **CreatedAt** | **time.Time** | Created At | 
 
@@ -119,6 +120,31 @@ and a boolean to check if the value has been set.
 
 SetOfficial sets Official field to given value.
 
+
+### GetAvatarUrl
+
+`func (o *ProfileAttributes) GetAvatarUrl() string`
+
+GetAvatarUrl returns the AvatarUrl field if non-nil, zero value otherwise.
+
+### GetAvatarUrlOk
+
+`func (o *ProfileAttributes) GetAvatarUrlOk() (*string, bool)`
+
+GetAvatarUrlOk returns a tuple with the AvatarUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAvatarUrl
+
+`func (o *ProfileAttributes) SetAvatarUrl(v string)`
+
+SetAvatarUrl sets AvatarUrl field to given value.
+
+### HasAvatarUrl
+
+`func (o *ProfileAttributes) HasAvatarUrl() bool`
+
+HasAvatarUrl returns a boolean if a field has been set.
 
 ### GetUpdatedAt
 

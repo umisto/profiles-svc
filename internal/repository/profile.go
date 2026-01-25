@@ -12,11 +12,16 @@ import (
 	"github.com/netbill/restkit/pagi"
 )
 
-func (r Repository) CreateProfile(ctx context.Context, userID uuid.UUID, username string) (models.Profile, error) {
+func (r Repository) InsertProfile(ctx context.Context, accountID uuid.UUID, username string) (models.Profile, error) {
 	res, err := r.profilesQ(ctx).Insert(ctx, pgdb.InsertProfileParams{
-		AccountID: userID,
+		AccountID: accountID,
 		Username:  username,
 	})
+	if err != nil {
+		return models.Profile{}, err
+	}
+
+	res, err = r.profilesQ(ctx).FilterAccountID(accountID).Get(ctx)
 	if err != nil {
 		return models.Profile{}, err
 	}

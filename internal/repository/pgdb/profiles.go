@@ -3,7 +3,6 @@ package pgdb
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"time"
 
@@ -26,7 +25,7 @@ type Profile struct {
 	UpdatedAt   time.Time      `db:"updated_at"`
 }
 
-func (p Profile) scan(row sq.RowScanner) error {
+func (p *Profile) scan(row sq.RowScanner) error {
 	err := row.Scan(
 		&p.AccountID,
 		&p.Username,
@@ -56,7 +55,7 @@ func NewProfilesQ(db pgx.DBTX) ProfilesQ {
 	builder := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	return ProfilesQ{
 		db:       db,
-		selector: builder.Select(ProfilesColumns).From(profilesTable),
+		selector: builder.Select("profiles.*").From(profilesTable),
 		inserter: builder.Insert(profilesTable),
 		updater:  builder.Update(profilesTable),
 		deleter:  builder.Delete(profilesTable),
@@ -73,34 +72,23 @@ type InsertProfileParams struct {
 }
 
 func (q ProfilesQ) Insert(ctx context.Context, input InsertProfileParams) (Profile, error) {
-	values := map[string]interface{}{
+	query, args, err := q.inserter.SetMap(map[string]interface{}{
 		"account_id":  input.AccountID,
 		"username":    input.Username,
 		"official":    input.Official,
 		"pseudonym":   input.Pseudonym,
 		"description": input.Description,
-	}
-
-	query, args, err := q.inserter.
-		SetMap(values).
-		Suffix("RETURNING account_id, username, official, pseudonym, description, created_at, updated_at").
-		ToSql()
+	}).Suffix("RETURNING profiles.*").ToSql()
 	if err != nil {
 		return Profile{}, fmt.Errorf("building insert query for %s: %w", profilesTable, err)
 	}
 
+	var out Profile
 	row := q.db.QueryRowContext(ctx, query, args...)
-
-	var p Profile
-	err = p.scan(row)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return Profile{}, nil
-		}
+	if err = out.scan(row); err != nil {
 		return Profile{}, err
 	}
-
-	return p, nil
+	return out, nil
 }
 
 func (q ProfilesQ) Update(ctx context.Context) (int64, error) {
@@ -133,9 +121,6 @@ func (q ProfilesQ) UpdateOne(ctx context.Context) (Profile, error) {
 	var p Profile
 	err = p.scan(row)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return Profile{}, nil
-		}
 		return Profile{}, err
 	}
 
@@ -178,9 +163,6 @@ func (q ProfilesQ) Get(ctx context.Context) (Profile, error) {
 	var p Profile
 	err = p.scan(row)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return Profile{}, nil
-		}
 		return Profile{}, err
 	}
 

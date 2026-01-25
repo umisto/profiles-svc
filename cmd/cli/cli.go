@@ -22,6 +22,8 @@ func Run(args []string) bool {
 		logrus.Fatalf("failed to load config: %v", err)
 	}
 
+	logium.SetLevel(logrus.DebugLevel)
+
 	log := logium.New()
 
 	lvl, err := logrus.ParseLevel(cfg.Log.Level)

@@ -11,6 +11,10 @@ import (
 )
 
 type handlers interface {
+	AccountCreated(
+		ctx context.Context,
+		event inbox.Event,
+	) inbox.EventStatus
 	AccountDeleted(
 		ctx context.Context,
 		event inbox.Event,
@@ -33,6 +37,7 @@ func (m Messenger) RunConsumer(ctx context.Context, handlers handlers) {
 
 	accountConsumer := consumer.New(m.log, m.db, "auth-svc-org-consumer", consumer.OnUnknownDoNothing, m.addr...)
 
+	accountConsumer.Handle(contracts.AccountCreatedEvent, handlers.AccountCreated)
 	accountConsumer.Handle(contracts.AccountDeletedEvent, handlers.AccountDeleted)
 	accountConsumer.Handle(contracts.AccountUsernameUpdatedEvent, handlers.AccountUsernameUpdated)
 
@@ -43,6 +48,8 @@ func (m Messenger) RunConsumer(ctx context.Context, handlers handlers) {
 		MinSleep:   100 * time.Millisecond,
 		MaxSleep:   1 * time.Second,
 	})
+
+	inboxer1.Handle(contracts.AccountCreatedEvent, handlers.AccountCreated)
 	inboxer1.Handle(contracts.AccountDeletedEvent, handlers.AccountDeleted)
 	inboxer1.Handle(contracts.AccountUsernameUpdatedEvent, handlers.AccountUsernameUpdated)
 
@@ -53,6 +60,8 @@ func (m Messenger) RunConsumer(ctx context.Context, handlers handlers) {
 		MinSleep:   100 * time.Millisecond,
 		MaxSleep:   1 * time.Second,
 	})
+	
+	inboxer2.Handle(contracts.AccountCreatedEvent, handlers.AccountCreated)
 	inboxer2.Handle(contracts.AccountDeletedEvent, handlers.AccountDeleted)
 	inboxer2.Handle(contracts.AccountUsernameUpdatedEvent, handlers.AccountUsernameUpdated)
 

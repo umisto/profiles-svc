@@ -56,7 +56,7 @@ func (s Service) AcceptUpdateAvatar(
 	}
 	if !correct {
 		return models.Profile{}, errx.ErrorContentTypeIsNotAllowed.Raise(
-			fmt.Errorf("content type is invalid, allowed only formats: .img .jpeg .png"),
+			fmt.Errorf("content type is invalid"),
 		)
 	}
 

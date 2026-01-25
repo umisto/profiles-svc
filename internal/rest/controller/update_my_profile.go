@@ -42,6 +42,8 @@ func (s Service) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 				initiator.AccountID,
 			),
 		})...)
+
+		return
 	}
 
 	res, err := s.domain.UpdateProfile(r.Context(), initiator.AccountID, profile.UpdateParams{

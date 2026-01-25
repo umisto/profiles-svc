@@ -47,7 +47,7 @@ func StartServices(ctx context.Context, cfg internal.Config, log *logium.Logger,
 		Credentials: credentials.NewStaticCredentialsProvider(
 			cfg.S3.AWS.AccessKeyID,
 			cfg.S3.AWS.SecretAccessKey,
-			cfg.S3.AWS.SessionToken,
+			"",
 		),
 	}
 

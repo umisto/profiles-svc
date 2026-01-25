@@ -7,7 +7,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
-	"github.com/netbill/imgx"
 )
 
 type Bucket struct {
@@ -78,7 +77,24 @@ func (r Bucket) AcceptUpdateProfileAvatar(
 }
 
 func (r Bucket) CheckProfileAvatarExtension(link string) (bool, error) {
-	return imgx.CheckExtension(link, r.config.ProfileAvatarAllowedExt...)
+	head, err := r.awsx3.HeadObject(context.TODO(), link) // или просто HeadObject внутри bucket
+	if err != nil {
+		return false, err
+	}
+
+	ct := ""
+	if head.ContentType != nil {
+		ct = *head.ContentType
+	}
+
+	switch ct {
+	case "image/png", "image/jpeg":
+		// ok
+	default:
+		return false, fmt.Errorf("content type is invalid, allowed only: image/png, image/jpeg")
+	}
+
+	return true, nil
 }
 
 func (r Bucket) CancelUpdateProfileAvatar(

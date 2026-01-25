@@ -302,6 +302,7 @@ components:
       example:
         data:
           attributes:
+            avatar_url: https://openapi-generator.tech
             updated_at: 2000-01-23T04:56:07.000+00:00
             description: description
             official: true
@@ -318,6 +319,7 @@ components:
     ProfileData:
       example:
         attributes:
+          avatar_url: https://openapi-generator.tech
           updated_at: 2000-01-23T04:56:07.000+00:00
           description: description
           official: true
@@ -343,6 +345,7 @@ components:
       - type
     ProfileAttributes:
       example:
+        avatar_url: https://openapi-generator.tech
         updated_at: 2000-01-23T04:56:07.000+00:00
         description: description
         official: true
@@ -362,6 +365,10 @@ components:
         official:
           description: Is Official Account
           type: boolean
+        avatar_url:
+          description: Avatar URL
+          format: uri
+          type: string
         updated_at:
           description: Updated At
           format: date-time
@@ -379,6 +386,7 @@ components:
       example:
         data:
         - attributes:
+            avatar_url: https://openapi-generator.tech
             updated_at: 2000-01-23T04:56:07.000+00:00
             description: description
             official: true
@@ -388,6 +396,7 @@ components:
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           type: profile
         - attributes:
+            avatar_url: https://openapi-generator.tech
             updated_at: 2000-01-23T04:56:07.000+00:00
             description: description
             official: true
