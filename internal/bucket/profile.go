@@ -64,11 +64,11 @@ func isAllowedImageFormat(format string) bool {
 	return false
 }
 
-func (r Bucket) GetPreloadLinkForUpdateProfileAvatar(
+func (b Bucket) GetPreloadLinkForUpdateProfileAvatar(
 	ctx context.Context,
 	accountID, sessionID uuid.UUID,
 ) (uploadURL, getUrl string, error error) {
-	uploadURL, getURL, err := r.s3.PresignPut(
+	uploadURL, getURL, err := b.s3.PresignPut(
 		ctx,
 		CreateTempProfileAvatarKey(accountID, sessionID),
 		ProfileAvatarUploadTTL,
@@ -82,11 +82,11 @@ func (r Bucket) GetPreloadLinkForUpdateProfileAvatar(
 	return uploadURL, getURL, nil
 }
 
-func (r Bucket) AcceptUpdateProfileAvatar(ctx context.Context, accountID, sessionID uuid.UUID) (string, error) {
+func (b Bucket) AcceptUpdateProfileAvatar(ctx context.Context, accountID, sessionID uuid.UUID) (string, error) {
 	tempKey := CreateTempProfileAvatarKey(accountID, sessionID)
 	finalKey := CreateProfileAvatarKey(accountID)
 
-	obj, err := r.s3.HeadObject(ctx, tempKey)
+	obj, err := b.s3.HeadObject(ctx, tempKey)
 	if err != nil {
 		var respErr *smithyhttp.ResponseError
 		if errors.As(err, &respErr) && (respErr.HTTPStatusCode() == 404 || respErr.HTTPStatusCode() == 403) {
@@ -110,7 +110,7 @@ func (r Bucket) AcceptUpdateProfileAvatar(ctx context.Context, accountID, sessio
 		)
 	}
 
-	rc, err := r.s3.GetObjectRange(ctx, tempKey, ProfileAvatarProbeMaxBytes)
+	rc, err := b.s3.GetObjectRange(ctx, tempKey, ProfileAvatarProbeMaxBytes)
 	if err != nil {
 		return "", errx.ErrorInternal.Raise(
 			fmt.Errorf("failed to get object range for profile avatar: %w", err),
@@ -151,14 +151,14 @@ func (r Bucket) AcceptUpdateProfileAvatar(ctx context.Context, accountID, sessio
 		)
 	}
 
-	res, err := r.s3.CopyObject(ctx, tempKey, finalKey)
+	res, err := b.s3.CopyObject(ctx, tempKey, finalKey)
 	if err != nil {
 		return "", errx.ErrorInternal.Raise(
 			fmt.Errorf("failed to copy object for profile avatar: %w", err),
 		)
 	}
 
-	err = r.s3.DeleteObject(ctx, tempKey)
+	err = b.s3.DeleteObject(ctx, tempKey)
 	if err != nil {
 		return "", errx.ErrorInternal.Raise(
 			fmt.Errorf("failed to delete temp object for profile avatar: %w", err),
@@ -168,11 +168,11 @@ func (r Bucket) AcceptUpdateProfileAvatar(ctx context.Context, accountID, sessio
 	return res, nil
 }
 
-func (r Bucket) CancelUpdateProfileAvatar(
+func (b Bucket) CancelUpdateProfileAvatar(
 	ctx context.Context,
 	accountID, sessionID uuid.UUID,
 ) error {
-	err := r.s3.DeleteObject(ctx, CreateTempProfileAvatarKey(accountID, sessionID))
+	err := b.s3.DeleteObject(ctx, CreateTempProfileAvatarKey(accountID, sessionID))
 	if err != nil {
 		return fmt.Errorf(
 			"failed to delete temp object for profile avatar: %w", err,
@@ -182,8 +182,8 @@ func (r Bucket) CancelUpdateProfileAvatar(
 	return nil
 }
 
-func (r Bucket) DeleteProfileAvatar(ctx context.Context, accountID uuid.UUID) error {
-	err := r.s3.DeleteObject(ctx, CreateProfileAvatarKey(accountID))
+func (b Bucket) DeleteProfileAvatar(ctx context.Context, accountID uuid.UUID) error {
+	err := b.s3.DeleteObject(ctx, CreateProfileAvatarKey(accountID))
 	if err != nil {
 		return fmt.Errorf(
 			"failed to delete object for profile avatar: %w", err,
