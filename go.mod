@@ -17,7 +17,7 @@ require (
 	github.com/netbill/awsx v0.1.7
 	github.com/netbill/evebox v0.5.0
 	github.com/netbill/logium v0.1.1
-	github.com/netbill/pgdbx v0.3.0
+	github.com/netbill/pgdbx v0.3.1
 	github.com/netbill/restkit v0.1.12
 	github.com/pkg/errors v0.9.1
 	github.com/rubenv/sql-migrate v1.8.0
@@ -63,5 +63,3 @@ require (
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 )
-
-replace github.com/netbill/pgdbx => /home/trpdjke/go/src/github.com/netbill/pgdbx

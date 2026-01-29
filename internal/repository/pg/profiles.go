@@ -61,10 +61,10 @@ type profiles struct {
 	counter  sq.SelectBuilder
 }
 
-func NewProfilesQ(pool *pgdbx.DB) repository.ProfilesQ {
+func NewProfilesQ(db *pgdbx.DB) repository.ProfilesQ {
 	builder := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 	return &profiles{
-		db:       pool,
+		db:       db,
 		selector: builder.Select("profiles.*").From(profilesTable),
 		inserter: builder.Insert(profilesTable),
 		updater:  builder.Update(profilesTable),
