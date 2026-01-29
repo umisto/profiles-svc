@@ -25,7 +25,7 @@ func (s Service) GetProfileByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.domain.GetProfileByID(r.Context(), userID)
+	res, err := s.domain.GetProfileByAccountID(r.Context(), userID)
 	if err != nil {
 		s.log.WithError(err).Errorf("failed to get profile by user id")
 		switch {

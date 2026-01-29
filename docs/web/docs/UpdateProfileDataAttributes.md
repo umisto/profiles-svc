@@ -4,14 +4,15 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Pseudonym** | Pointer to **string** | Pseudonym | [optional] 
-**Description** | Pointer to **string** | Description | [optional] 
+**Pseudonym** | Pointer to **string** | pseudonym | [optional] 
+**Description** | Pointer to **string** | description | [optional] 
+**DeleteAvatar** | **bool** | delete avatar | 
 
 ## Methods
 
 ### NewUpdateProfileDataAttributes
 
-`func NewUpdateProfileDataAttributes() *UpdateProfileDataAttributes`
+`func NewUpdateProfileDataAttributes(deleteAvatar bool, ) *UpdateProfileDataAttributes`
 
 NewUpdateProfileDataAttributes instantiates a new UpdateProfileDataAttributes object
 This constructor will assign default values to properties that have it defined,
@@ -75,6 +76,26 @@ SetDescription sets Description field to given value.
 `func (o *UpdateProfileDataAttributes) HasDescription() bool`
 
 HasDescription returns a boolean if a field has been set.
+
+### GetDeleteAvatar
+
+`func (o *UpdateProfileDataAttributes) GetDeleteAvatar() bool`
+
+GetDeleteAvatar returns the DeleteAvatar field if non-nil, zero value otherwise.
+
+### GetDeleteAvatarOk
+
+`func (o *UpdateProfileDataAttributes) GetDeleteAvatarOk() (*bool, bool)`
+
+GetDeleteAvatarOk returns a tuple with the DeleteAvatar field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDeleteAvatar
+
+`func (o *UpdateProfileDataAttributes) SetDeleteAvatar(v bool)`
+
+SetDeleteAvatar sets DeleteAvatar field to given value.
+
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

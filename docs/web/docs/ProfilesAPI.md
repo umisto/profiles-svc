@@ -309,7 +309,7 @@ import (
 )
 
 func main() {
-	updateProfile := *openapiclient.NewUpdateProfile(*openapiclient.NewUpdateProfileData("TODO", "Type_example", *openapiclient.NewUpdateProfileDataAttributes())) // UpdateProfile | 
+	updateProfile := *openapiclient.NewUpdateProfile(*openapiclient.NewUpdateProfileData("TODO", "Type_example", *openapiclient.NewUpdateProfileDataAttributes(false))) // UpdateProfile | 
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)

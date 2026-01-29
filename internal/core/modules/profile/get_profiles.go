@@ -7,7 +7,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/core/models"
 )
 
-func (s Service) GetProfileByID(ctx context.Context, userID uuid.UUID) (models.Profile, error) {
+func (s Service) GetProfileByAccountID(ctx context.Context, userID uuid.UUID) (models.Profile, error) {
 	return s.repo.GetProfileByAccountID(ctx, userID)
 }
 

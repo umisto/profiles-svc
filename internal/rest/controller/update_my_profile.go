@@ -16,6 +16,29 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
+func (s Service) OenProfileUpdateSession(w http.ResponseWriter, r *http.Request) {
+	initiator, err := middlewares.AccountData(r.Context())
+	if err != nil {
+		s.log.WithError(err).Error("failed to get user from context")
+		ape.RenderErr(w, problems.Unauthorized("failed to get user from context"))
+
+		return
+	}
+
+	res, err := s.domain.OpenProfileUpdateSession(
+		r.Context(),
+		initiator.AccountID,
+	)
+	if err != nil {
+		s.log.WithError(err).Errorf("failed to get preload link for update avatar")
+		ape.RenderErr(w, problems.InternalError())
+
+		return
+	}
+
+	ape.Render(w, 200, res)
+}
+
 func (s Service) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
@@ -46,15 +69,43 @@ func (s Service) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.domain.UpdateProfile(r.Context(), initiator.AccountID, profile.UpdateParams{
-		Pseudonym:   req.Data.Attributes.Pseudonym,
-		Description: req.Data.Attributes.Description,
-	})
+	uploadData, err := middlewares.UploadFilesData(r.Context())
+	if err != nil {
+		s.log.WithError(err).Error("failed to get upload session id")
+		ape.RenderErr(w, problems.Unauthorized("failed to get upload session id"))
+
+		return
+	}
+
+	res, err := s.domain.UpdateProfile(
+		r.Context(),
+		initiator.AccountID,
+		profile.UpdateParams{
+			Pseudonym:   req.Data.Attributes.Pseudonym,
+			Description: req.Data.Attributes.Description,
+			Media: profile.UpdateMediaParams{
+				UploadSessionID: uploadData.UploadSessionID,
+				DeleteAvatar:    req.Data.Attributes.DeleteAvatar,
+			},
+		},
+	)
 	if err != nil {
 		s.log.WithError(err).Errorf("failed to update profile")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.Unauthorized("profile for user does not exist"))
+		case errors.Is(err, errx.ErrorProfileAvatarContentFormatIsNotAllowed):
+			ape.RenderErr(w, problems.BadRequest(validation.Errors{
+				"avatar": fmt.Errorf(errx.ErrorProfileAvatarContentFormatIsNotAllowed.Error()),
+			})...)
+		case errors.Is(err, errx.ErrorProfileAvatarTooLarge):
+			ape.RenderErr(w, problems.BadRequest(validation.Errors{
+				"avatar": fmt.Errorf(errx.ErrorProfileAvatarTooLarge.Error()),
+			})...)
+		case errors.Is(err, errx.ErrorProfileAvatarContentTypeIsNotAllowed):
+			ape.RenderErr(w, problems.BadRequest(validation.Errors{
+				"avatar": fmt.Errorf(errx.ErrorProfileAvatarContentTypeIsNotAllowed.Error()),
+			})...)
 		default:
 			ape.RenderErr(w, problems.InternalError())
 		}
@@ -63,4 +114,36 @@ func (s Service) UpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ape.Render(w, http.StatusOK, responses.Profile(res))
+}
+
+func (s Service) CancelUploadProfileAvatar(w http.ResponseWriter, r *http.Request) {
+	initiator, err := middlewares.AccountData(r.Context())
+	if err != nil {
+		s.log.WithError(err).Error("failed to get user from context")
+		ape.RenderErr(w, problems.Unauthorized("failed to get user from context"))
+
+		return
+	}
+
+	uploadFilesData, err := middlewares.UploadFilesData(r.Context())
+	if err != nil {
+		s.log.WithError(err).Error("failed to get upload session id")
+		ape.RenderErr(w, problems.Unauthorized("failed to get upload session id"))
+
+		return
+	}
+
+	err = s.domain.DeleteUploadProfileAvatarInSession(
+		r.Context(),
+		initiator.AccountID,
+		uploadFilesData.UploadSessionID,
+	)
+	if err != nil {
+		s.log.WithError(err).Errorf("failed to cancel update avatar")
+		ape.RenderErr(w, problems.InternalError())
+
+		return
+	}
+
+	ape.Render(w, 200, nil)
 }

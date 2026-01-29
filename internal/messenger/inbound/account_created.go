@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/netbill/ape"
 	"github.com/netbill/evebox/box/inbox"
-	"github.com/netbill/profiles-svc/internal/core/errx"
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
-	"github.com/sirupsen/logrus"
 )
 
 func (i Inbound) AccountCreated(
@@ -21,20 +20,15 @@ func (i Inbound) AccountCreated(
 		return inbox.EventStatusFailed
 	}
 
-	logrus.Debugf("handling account created event for account ID %s", payload.AccountID)
-
 	if _, err := i.domain.CreateProfile(ctx, payload.AccountID, payload.Username); err != nil {
-		switch {
-		case errors.Is(err, errx.ErrorInternal):
-			i.log.Errorf(
-				"failed to create profile due to internal error, key %s, id: %s, error: %v",
-				event.Key, event.ID, err,
-			)
-			return inbox.EventStatusPending
-		default:
+		var ae *ape.Error
+		if errors.As(err, &ae) {
 			i.log.Errorf("failed to create profile, key %s, id: %s, error: %v", event.Key, event.ID, err)
 			return inbox.EventStatusFailed
 		}
+
+		i.log.Errorf("failed to create profile due to internal error, key %s, id: %s, error: %v", event.Key, event.ID, err)
+		return inbox.EventStatusPending
 	}
 
 	return inbox.EventStatusProcessed

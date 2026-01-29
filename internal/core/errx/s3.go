@@ -3,8 +3,9 @@ package errx
 import "github.com/netbill/ape"
 
 var (
-	ErrorContentTypeIsNotAllowed = ape.DeclareError("CONTENT_TYPE_IS_NOT_ALLOWED")
-	ErrorContentLengthExceed     = ape.DeclareError("CONTENT_LENGTH_EXCEED")
+	ErrorProfileAvatarContentFormatIsNotAllowed = ape.DeclareError("PROFILE_AVATAR_CONTENT_FORMAT_IS_NOT_ALLOWED")
+	ErrorProfileAvatarContentTypeIsNotAllowed   = ape.DeclareError("PROFILE_AVATAR_CONTENT_TYPE_IS_NOT_ALLOWED")
+	ErrorProfileAvatarTooLarge                  = ape.DeclareError("PROFILE_AVATAR_TOO_LARGE")
 
-	ErrorNoAvatarUpload = ape.DeclareError("NO_AVATAR_UPLOAD")
+	ErrorNoContentUploaded = ape.DeclareError("NO_CONTENT_UPLOADED")
 )

@@ -277,6 +277,7 @@ components:
       example:
         data:
           attributes:
+            delete_avatar: true
             description: description
             pseudonym: pseudonym
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
@@ -492,18 +493,25 @@ components:
       - type
     UpdateProfile_data_attributes:
       example:
+        delete_avatar: true
         description: description
         pseudonym: pseudonym
       properties:
         pseudonym:
-          description: Pseudonym
+          description: pseudonym
           type: string
         description:
-          description: Description
+          description: description
           type: string
+        delete_avatar:
+          description: delete avatar
+          type: boolean
+      required:
+      - delete_avatar
     UpdateProfile_data:
       example:
         attributes:
+          delete_avatar: true
           description: description
           pseudonym: pseudonym
         id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91

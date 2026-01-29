@@ -15,9 +15,9 @@ type Service struct {
 	bucket    bucket
 }
 
-func New(db repo, messanger messanger, token token, bucket bucket) Service {
+func New(repo repo, messanger messanger, token token, bucket bucket) Service {
 	return Service{
-		repo:      db,
+		repo:      repo,
 		messanger: messanger,
 		token:     token,
 		bucket:    bucket,
@@ -55,8 +55,9 @@ type messanger interface {
 }
 
 type token interface {
-	NewUploadProfileAvatarToken(
-		sessionID uuid.UUID,
+	NewUploadProfileMediaToken(
+		OwnerAccountID uuid.UUID,
+		UploadSessionID uuid.UUID,
 	) (string, error)
 }
 
@@ -80,4 +81,9 @@ type bucket interface {
 		ctx context.Context,
 		accountID, sessionID uuid.UUID,
 	) (string, error)
+
+	CleanProfileMediaSession(
+		ctx context.Context,
+		accountID, sessionID uuid.UUID,
+	) error
 }

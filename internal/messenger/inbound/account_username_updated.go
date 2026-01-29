@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/netbill/ape"
 	"github.com/netbill/evebox/box/inbox"
-	"github.com/netbill/profiles-svc/internal/core/errx"
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
 )
 
@@ -21,17 +21,17 @@ func (i Inbound) AccountUsernameUpdated(
 	}
 
 	if _, err := i.domain.UpdateProfileUsername(ctx, payload.AccountID, payload.NewUsername); err != nil {
-		switch {
-		case errors.Is(err, errx.ErrorInternal):
+		var ae *ape.Error
+		if errors.As(err, &ae) {
 			i.log.Errorf(
 				"failed to update username due to internal error, key %s, id: %s, error: %v",
 				event.Key, event.ID, err,
 			)
 			return inbox.EventStatusPending
-		default:
-			i.log.Errorf("failed to update username, key %s, id: %s, error: %v", event.Key, event.ID, err)
-			return inbox.EventStatusFailed
 		}
+
+		i.log.Errorf("failed to update username, key %s, id: %s, error: %v", event.Key, event.ID, err)
+		return inbox.EventStatusFailed
 	}
 
 	return inbox.EventStatusProcessed

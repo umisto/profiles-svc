@@ -16,6 +16,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/messenger/inbound"
 	"github.com/netbill/profiles-svc/internal/messenger/outbound"
 	"github.com/netbill/profiles-svc/internal/repository"
+	"github.com/netbill/profiles-svc/internal/repository/pgdb"
 	"github.com/netbill/profiles-svc/internal/rest/middlewares"
 	"github.com/netbill/profiles-svc/internal/tokenmanager"
 
@@ -57,7 +58,9 @@ func StartServices(ctx context.Context, cfg Config, log *logium.Logger, wg *sync
 
 	s3Bucket := bucket.New(awsxSvc)
 
-	repo := repository.New(pool)
+	profilesSqlQ := pgdb.NewProfilesQ(ctx, pool)
+	transactionSqlQ := pgdb.NewTransaction(pool)
+	repo := repository.New(transactionSqlQ, profilesSqlQ)
 
 	kafkaOutbound := outbound.New(log, pool)
 

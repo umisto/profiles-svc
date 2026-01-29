@@ -309,13 +309,18 @@ components:
                 - update_profile
             attributes:
               type: object
+              required:
+                - delete_avatar
               properties:
                 pseudonym:
                   type: string
-                  description: Pseudonym
+                  description: pseudonym
                 description:
                   type: string
-                  description: Description
+                  description: description
+                delete_avatar:
+                  type: boolean
+                  description: delete avatar
     UpdateProfileOfficial:
       type: object
       required:

@@ -31,7 +31,7 @@ func (o Outbound) WriteProfileDeleted(
 			Key:   []byte(accountID.String()),
 			Value: payload,
 			Headers: []kafka.Header{
-				{Key: header.EventID, Value: []byte(uuid.New().String())}, // Outbox will fill this
+				{Key: header.EventID, Value: []byte(uuid.New().String())},
 				{Key: header.EventType, Value: []byte(contracts.ProfileDeletedEvent)},
 				{Key: header.EventVersion, Value: []byte("1")},
 				{Key: header.Producer, Value: []byte(contracts.ProfilesSvcGroup)},

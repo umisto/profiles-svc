@@ -17,29 +17,21 @@ type domain interface {
 		limit, offset uint,
 	) (pagi.Page[[]models.Profile], error)
 
-	GetProfileByID(ctx context.Context, userID uuid.UUID) (models.Profile, error)
+	GetProfileByAccountID(ctx context.Context, userID uuid.UUID) (models.Profile, error)
 	GetProfileByUsername(ctx context.Context, username string) (models.Profile, error)
 
-	UpdateProfile(ctx context.Context, accountID uuid.UUID, input profile.UpdateParams) (models.Profile, error)
 	UpdateProfileOfficial(ctx context.Context, accountID uuid.UUID, official bool) (models.Profile, error)
 	UpdateProfileUsername(ctx context.Context, accountID uuid.UUID, username string) (models.Profile, error)
 
-	GetPreloadLinkForUpdateAvatar(
+	UpdateProfile(ctx context.Context, accountID uuid.UUID, params profile.UpdateParams) (models.Profile, error)
+	OpenProfileUpdateSession(
 		ctx context.Context,
 		accountID uuid.UUID,
 	) (models.UpdateProfileAvatar, error)
-	CancelUpdateAvatar(
+	DeleteUploadProfileAvatarInSession(
 		ctx context.Context,
 		accountID, sessionID uuid.UUID,
-	) (models.Profile, error)
-	AcceptUpdateAvatar(
-		ctx context.Context,
-		accountID, sessionID uuid.UUID,
-	) (models.Profile, error)
-	DeleteProfileAvatar(
-		ctx context.Context,
-		accountID uuid.UUID,
-	) (models.Profile, error)
+	) error
 }
 
 type Service struct {

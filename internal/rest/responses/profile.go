@@ -18,7 +18,7 @@ func Profile(m models.Profile) resources.Profile {
 				Pseudonym:   m.Pseudonym,
 				Description: m.Description,
 				Official:    m.Official,
-				AvatarUrl:   m.AvatarURL,
+				AvatarUrl:   m.Avatar,
 				UpdatedAt:   m.UpdatedAt,
 				CreatedAt:   m.CreatedAt,
 			},

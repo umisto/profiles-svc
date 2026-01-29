@@ -9,7 +9,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/netbill/logium"
-	"github.com/netbill/profiles-svc/internal/tokenmanager"
 	"github.com/netbill/restkit/tokens/roles"
 )
 
@@ -24,15 +23,13 @@ type Handlers interface {
 	UpdateMyProfile(w http.ResponseWriter, r *http.Request)
 	UpdateProfileOfficial(w http.ResponseWriter, r *http.Request)
 
-	GetPreloadLinkForUpdateAvatar(w http.ResponseWriter, r *http.Request)
-	AcceptUpdateAvatar(w http.ResponseWriter, r *http.Request)
-	CancelUpdateAvatar(w http.ResponseWriter, r *http.Request)
-	DeleteMyProfileAvatar(w http.ResponseWriter, r *http.Request)
+	OenProfileUpdateSession(w http.ResponseWriter, r *http.Request)
+	CancelUploadProfileAvatar(w http.ResponseWriter, r *http.Request)
 }
 type Middlewares interface {
 	AccountAuth() func(http.Handler) http.Handler
 	AccountRolesGrant(allowedRoles map[string]bool) func(http.Handler) http.Handler
-	ConfirmUploadFiles(scope string) func(http.Handler) http.Handler
+	UpdateOwnProfile() func(http.Handler) http.Handler
 }
 
 type Service struct {
@@ -67,7 +64,7 @@ func (s *Service) Run(ctx context.Context, cfg Config) {
 		roles.SystemAdmin: true,
 		roles.SystemModer: true,
 	})
-	uploadProfileAvatar := s.middlewares.ConfirmUploadFiles(tokenmanager.UploadProfileAvatarScope)
+	updateOwnProfile := s.middlewares.UpdateOwnProfile()
 
 	r := chi.NewRouter()
 
@@ -90,24 +87,21 @@ func (s *Service) Run(ctx context.Context, cfg Config) {
 
 				r.With(auth).Route("/me", func(r chi.Router) {
 					r.Get("/", s.handlers.GetMyProfile)
-					r.Put("/", s.handlers.UpdateMyProfile)
-					r.Route("/avatar", func(r chi.Router) {
-						r.Route("/upload", func(r chi.Router) {
-							r.Get("/", s.handlers.GetPreloadLinkForUpdateAvatar)
+					r.With(updateOwnProfile).Put("/", s.handlers.UpdateMyProfile)
 
-							r.With(uploadProfileAvatar).Post("/", s.handlers.AcceptUpdateAvatar)
-							r.With(uploadProfileAvatar).Delete("/", s.handlers.CancelUpdateAvatar)
-						})
+					r.Route("/update-session", func(r chi.Router) {
+						r.Post("/", s.handlers.OenProfileUpdateSession)
 
-						r.Delete("/", s.handlers.DeleteMyProfileAvatar)
+						r.With(updateOwnProfile).
+							Delete("/avatar", s.handlers.CancelUploadProfileAvatar)
 					})
 				})
+			})
 
-				r.Route("/{account_id}", func(r chi.Router) {
-					r.Get("/", s.handlers.GetProfileByID)
+			r.Route("/{account_id}", func(r chi.Router) {
+				r.Get("/", s.handlers.GetProfileByID)
 
-					r.With(auth, sysmoder).Patch("/official", s.handlers.UpdateProfileOfficial)
-				})
+				r.With(auth, sysmoder).Patch("/official", s.handlers.UpdateProfileOfficial)
 			})
 		})
 	})

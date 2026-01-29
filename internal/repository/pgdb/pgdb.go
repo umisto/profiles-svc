@@ -1,26 +1,22 @@
 package pgdb
 
 import (
-	"github.com/netbill/profiles-svc/internal/core/models"
+	"context"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/netbill/pgxtx"
+	"github.com/netbill/profiles-svc/internal/repository"
 )
 
-func (p *Profile) ToModel() models.Profile {
-	profile := models.Profile{
-		AccountID: p.AccountID,
-		Username:  p.Username,
-		Official:  p.Official,
+type transaction struct {
+	pool *pgxpool.Pool
+}
 
-		CreatedAt: p.CreatedAt,
-		UpdatedAt: p.UpdatedAt,
+func NewTransaction(pool *pgxpool.Pool) repository.Transactioner {
+	return &transaction{
+		pool: pool,
 	}
-	if p.Pseudonym.Valid {
-		profile.Pseudonym = &p.Pseudonym.String
-	}
-	if p.Description.Valid {
-		profile.Description = &p.Description.String
-	}
-	if p.AvatarURL.Valid {
-		profile.AvatarURL = &p.AvatarURL.String
-	}
-	return profile
+}
+func (q *transaction) Transaction(ctx context.Context, fn func(ctx context.Context) error) error {
+	return pgxtx.Transaction(ctx, q.pool, fn)
 }

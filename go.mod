@@ -8,7 +8,6 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.41.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.7
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.95.1
-	github.com/aws/smithy-go v1.24.0
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-chi/cors v1.2.2
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
@@ -16,9 +15,9 @@ require (
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/netbill/ape v0.1.1
 	github.com/netbill/awsx v0.1.6
-	github.com/netbill/evebox v0.4.0
+	github.com/netbill/evebox v0.4.3
 	github.com/netbill/logium v0.1.1
-	github.com/netbill/pgxtx v0.2.0
+	github.com/netbill/pgxtx v0.2.1
 	github.com/netbill/restkit v0.1.11
 	github.com/pkg/errors v0.9.1
 	github.com/rubenv/sql-migrate v1.8.0
@@ -38,6 +37,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.9.8 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.19.17 // indirect
+	github.com/aws/smithy-go v1.24.0 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
@@ -62,4 +62,9 @@ require (
 	golang.org/x/sync v0.17.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
+)
+
+replace (
+	github.com/netbill/awsx => /home/trpdjke/go/src/github.com/netbill/awsx
+	github.com/netbill/restkit => /home/trpdjke/go/src/github.com/netbill/restkit
 )

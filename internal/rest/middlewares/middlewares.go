@@ -3,8 +3,12 @@ package middlewares
 import (
 	"net/http"
 
+	"github.com/netbill/ape"
+	"github.com/netbill/ape/problems"
 	"github.com/netbill/logium"
+	"github.com/netbill/profiles-svc/internal/tokenmanager"
 	"github.com/netbill/restkit/mdlv"
+	"github.com/netbill/restkit/tokens"
 )
 
 type Service struct {
@@ -40,6 +44,30 @@ func (s Service) AccountRolesGrant(
 	return mdlv.AccountRoleGrant(s.log, accountDataCtxKey, allowedRoles)
 }
 
-func (s Service) ConfirmUploadFiles(scope string) func(next http.Handler) http.Handler {
-	return mdlv.ConfirmUploadFiles(s.log, uploadFilesCtxKey, s.uploadFilesSK, scope)
+func (s Service) UpdateOwnProfile() func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+
+			userData, ok := ctx.Value(accountDataCtxKey).(tokens.AccountJwtData)
+			if !ok {
+				s.log.Errorf("missing account data in context")
+				ape.RenderErr(w, problems.Unauthorized("missing account data in context"))
+				return
+			}
+
+			confirm := mdlv.ConfirmUploadFiles(
+				s.log,
+				uploadFilesCtxKey,
+				s.uploadFilesSK,
+				mdlv.ConfirmUploadFilesParams{
+					Audience:   tokenmanager.ProfilesService,
+					Resource:   tokenmanager.ProfileResource,
+					ResourceID: userData.AccountID.String(),
+				},
+			)
+
+			confirm(next).ServeHTTP(w, r)
+		})
+	}
 }
