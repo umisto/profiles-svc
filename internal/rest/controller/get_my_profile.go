@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Service) GetMyProfile(w http.ResponseWriter, r *http.Request) {
+func (s Controller) GetMyProfile(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
 		s.log.WithError(err).Error("failed to get account from context")

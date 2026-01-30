@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/restkit/pagi"
 )
 
-func (s Service) FilterProfiles(w http.ResponseWriter, r *http.Request) {
+func (s Controller) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	limit, offset := pagi.GetPagination(r)
 

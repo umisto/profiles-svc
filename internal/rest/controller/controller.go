@@ -34,13 +34,13 @@ type domain interface {
 	) error
 }
 
-type Service struct {
+type Controller struct {
 	domain domain
 	log    *logium.Logger
 }
 
-func New(log *logium.Logger, profile domain) Service {
-	return Service{
+func New(log *logium.Logger, profile domain) Controller {
+	return Controller{
 		domain: profile,
 		log:    log,
 	}

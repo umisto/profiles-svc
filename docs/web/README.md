@@ -90,9 +90,6 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
- - [CreateProfile](docs/CreateProfile.md)
- - [CreateProfileData](docs/CreateProfileData.md)
- - [CreateProfileDataAttributes](docs/CreateProfileDataAttributes.md)
  - [Errors](docs/Errors.md)
  - [ErrorsErrorsInner](docs/ErrorsErrorsInner.md)
  - [PaginationData](docs/PaginationData.md)

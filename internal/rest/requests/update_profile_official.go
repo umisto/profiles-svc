@@ -8,17 +8,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/netbill/profiles-svc/resources"
+	"github.com/netbill/restkit"
 )
-
-func newDecodeError(what string, err error) error {
-	return validation.Errors{
-		what: fmt.Errorf("decode request %s: %w", what, err),
-	}
-}
 
 func UpdateProfileOfficial(r *http.Request) (req resources.UpdateProfileOfficial, err error) {
 	if err = json.NewDecoder(r.Body).Decode(&req); err != nil {
-		err = newDecodeError("body", err)
+		err = restkit.NewDecodeError("body", err)
 		return
 	}
 

@@ -8,7 +8,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/middlewares"
 )
 
-func (s Service) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Request) {
+func (s Controller) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
 		s.log.WithError(err).Error("failed to get user from context")

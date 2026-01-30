@@ -5,9 +5,6 @@ api/openapi.yaml
 api_profiles.go
 client.go
 configuration.go
-docs/CreateProfile.md
-docs/CreateProfileData.md
-docs/CreateProfileDataAttributes.md
 docs/Errors.md
 docs/ErrorsErrorsInner.md
 docs/PaginationData.md
@@ -31,9 +28,6 @@ docs/UpdateProfileSessionDataRelationshipsProfileData.md
 git_push.sh
 go.mod
 go.sum
-model_create_profile.go
-model_create_profile_data.go
-model_create_profile_data_attributes.go
 model_errors.go
 model_errors_errors_inner.go
 model_pagination_data.go

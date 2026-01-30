@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/restkit/tokens"
 )
 
-type Service struct {
+type Provider struct {
 	accountAccessSK string
 	uploadFilesSK   string
 
@@ -26,42 +26,42 @@ type Config struct {
 func New(
 	log *logium.Logger,
 	cfg Config,
-) Service {
-	return Service{
+) Provider {
+	return Provider{
 		accountAccessSK: cfg.AccountAccessSK,
 		uploadFilesSK:   cfg.UploadFilesSK,
 		log:             log,
 	}
 }
 
-func (s Service) AccountAuth() func(next http.Handler) http.Handler {
-	return mdlv.AccountAuth(s.log, accountDataCtxKey, s.accountAccessSK)
+func (p Provider) AccountAuth() func(next http.Handler) http.Handler {
+	return mdlv.AccountAuth(p.log, accountDataCtxKey, p.accountAccessSK)
 }
 
-func (s Service) AccountRolesGrant(
+func (p Provider) AccountRolesGrant(
 	allowedRoles map[string]bool,
 ) func(http.Handler) http.Handler {
-	return mdlv.AccountRoleGrant(s.log, accountDataCtxKey, allowedRoles)
+	return mdlv.AccountRoleGrant(p.log, accountDataCtxKey, allowedRoles)
 }
 
-func (s Service) UpdateOwnProfile() func(next http.Handler) http.Handler {
+func (p Provider) UpdateOwnProfile() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
 
 			userData, ok := ctx.Value(accountDataCtxKey).(tokens.AccountJwtData)
 			if !ok {
-				s.log.Errorf("missing account data in context")
+				p.log.Errorf("missing account data in context")
 				ape.RenderErr(w, problems.Unauthorized("missing account data in context"))
 				return
 			}
 
 			confirm := mdlv.ConfirmUploadFiles(
-				s.log,
+				p.log,
 				uploadFilesCtxKey,
-				s.uploadFilesSK,
+				p.uploadFilesSK,
 				mdlv.ConfirmUploadFilesParams{
-					Audience:   tokenmanager.ProfilesService,
+					Audience:   tokenmanager.ProfilesActor,
 					Resource:   tokenmanager.ProfileResource,
 					ResourceID: userData.AccountID.String(),
 				},

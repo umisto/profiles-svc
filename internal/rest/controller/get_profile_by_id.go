@@ -14,7 +14,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Service) GetProfileByID(w http.ResponseWriter, r *http.Request) {
+func (s Controller) GetProfileByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.Parse(chi.URLParam(r, "account_id"))
 	if err != nil {
 		s.log.WithError(err).Errorf("invalid account id")

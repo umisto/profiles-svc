@@ -14,14 +14,13 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/netbill/ape v0.1.1
-	github.com/netbill/awsx v0.1.7
-	github.com/netbill/evebox v0.5.0
-	github.com/netbill/logium v0.1.1
+	github.com/netbill/awsx v0.1.8
+	github.com/netbill/evebox v0.5.2
 	github.com/netbill/pgdbx v0.3.1
-	github.com/netbill/restkit v0.1.12
+	github.com/netbill/restkit v0.1.13
 	github.com/pkg/errors v0.9.1
 	github.com/rubenv/sql-migrate v1.8.0
-	github.com/segmentio/kafka-go v0.4.49
+	github.com/segmentio/kafka-go v0.4.50
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.21.0
 )
@@ -64,4 +63,4 @@ require (
 	golang.org/x/text v0.29.0 // indirect
 )
 
-replace github.com/netbill/awsx => /home/trpdjke/go/src/github.com/netbill/awsx
+replace github.com/netbill/evebox => /home/trpdjke/go/src/github.com/netbill/evebox

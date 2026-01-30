@@ -6,11 +6,12 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/netbill/profiles-svc/resources"
+	"github.com/netbill/restkit"
 )
 
 func UpdateProfile(r *http.Request) (req resources.UpdateProfile, err error) {
 	if err = json.NewDecoder(r.Body).Decode(&req); err != nil {
-		err = newDecodeError("body", err)
+		err = restkit.NewDecodeError("body", err)
 		return
 	}
 

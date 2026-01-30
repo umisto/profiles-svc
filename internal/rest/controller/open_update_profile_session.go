@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Service) OenProfileUpdateSession(w http.ResponseWriter, r *http.Request) {
+func (s Controller) OenProfileUpdateSession(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
 		s.log.WithError(err).Error("failed to get user from context")

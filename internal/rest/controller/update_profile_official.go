@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Service) UpdateProfileOfficial(w http.ResponseWriter, r *http.Request) {
+func (s Controller) UpdateProfileOfficial(w http.ResponseWriter, r *http.Request) {
 	req, err := requests.UpdateProfileOfficial(r)
 	if err != nil {
 		s.log.WithError(err).Errorf("invalid update official request")

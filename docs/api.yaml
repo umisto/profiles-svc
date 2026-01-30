@@ -32,8 +32,6 @@ paths:
 components:
   schemas:
     #requests
-    CreateProfile:
-      $ref: './spec/components/schemas/requests/CreateProfile.yaml'
     UpdateProfile:
       $ref: './spec/components/schemas/requests/UpdateProfile.yaml'
     UpdateProfileOfficial:

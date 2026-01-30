@@ -320,12 +320,6 @@ paths:
       - Profiles
 components:
   schemas:
-    CreateProfile:
-      properties:
-        data:
-          $ref: "#/components/schemas/CreateProfile_data"
-      required:
-      - data
     UpdateProfile:
       example:
         data:
@@ -560,35 +554,6 @@ components:
           type: string
       required:
       - self
-    CreateProfile_data_attributes:
-      properties:
-        username:
-          description: Username
-          type: string
-        pseudonym:
-          description: Pseudonym
-          type: string
-        description:
-          description: Description
-          type: string
-      required:
-      - username
-    CreateProfile_data:
-      properties:
-        id:
-          description: account id
-          format: uuid
-          type: string
-        type:
-          enum:
-          - create_profile
-          type: string
-        attributes:
-          $ref: "#/components/schemas/CreateProfile_data_attributes"
-      required:
-      - attributes
-      - id
-      - type
     UpdateProfile_data_attributes:
       example:
         delete_avatar: true

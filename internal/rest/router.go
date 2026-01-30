@@ -26,6 +26,7 @@ type Handlers interface {
 	OenProfileUpdateSession(w http.ResponseWriter, r *http.Request)
 	DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Request)
 }
+
 type Middlewares interface {
 	AccountAuth() func(http.Handler) http.Handler
 	AccountRolesGrant(allowedRoles map[string]bool) func(http.Handler) http.Handler

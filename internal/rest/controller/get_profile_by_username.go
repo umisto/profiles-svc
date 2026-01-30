@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Service) GetProfileByUsername(w http.ResponseWriter, r *http.Request) {
+func (s Controller) GetProfileByUsername(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 
 	res, err := s.domain.GetProfileByUsername(r.Context(), username)
