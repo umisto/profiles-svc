@@ -67,7 +67,7 @@ func StartServices(ctx context.Context, cfg Config, log *logium.Logger, wg *sync
 	}
 
 	s3Bucket := bucket.New(bucket.Config{
-		Storage:                awsS3,
+		S3:                     awsS3,
 		ProfileAvatarValidator: profileAvatarValidator,
 		UploadTokensTTL: bucket.UploadTokensTTL{
 			ProfileAvatar: cfg.S3.Upload.Token.TTL.Profile,

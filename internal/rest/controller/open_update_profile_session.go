@@ -11,21 +11,21 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Controller) OenProfileUpdateSession(w http.ResponseWriter, r *http.Request) {
+func (c Controller) OenProfileUpdateSession(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
-		s.log.WithError(err).Error("failed to get user from context")
+		c.log.WithError(err).Error("failed to get user from context")
 		ape.RenderErr(w, problems.Unauthorized("failed to get user from context"))
 
 		return
 	}
 
-	media, profile, err := s.domain.OpenProfileUpdateSession(
+	media, profile, err := c.domain.OpenProfileUpdateSession(
 		r.Context(),
 		initiator.AccountID,
 	)
 	if err != nil {
-		s.log.WithError(err).Errorf("failed to get preload link for update avatar")
+		c.log.WithError(err).Errorf("failed to get preload link for update avatar")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.NotFound("profile for user does not exist"))

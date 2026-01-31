@@ -16,10 +16,10 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Request) {
+func (c Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
-		s.log.WithError(err).Error("failed to get user from context")
+		c.log.WithError(err).Error("failed to get user from context")
 		ape.RenderErr(w, problems.Unauthorized("failed to get user from context"))
 
 		return
@@ -27,14 +27,14 @@ func (s Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Reques
 
 	req, err := requests.UpdateProfile(r)
 	if err != nil {
-		s.log.WithError(err).Errorf("invalid create profile request")
+		c.log.WithError(err).Errorf("invalid create profile request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 
 		return
 	}
 
 	if req.Data.Id != initiator.AccountID {
-		s.log.WithError(err).Errorf("id in body and initiator id mismatch fir update My profile request")
+		c.log.WithError(err).Errorf("id in body and initiator id mismatch fir update My profile request")
 		ape.RenderErr(w, problems.BadRequest(validation.Errors{
 			"id": fmt.Errorf(
 				"id in body: %s and initiator id: %s mismatch fir update My profile request",
@@ -48,13 +48,13 @@ func (s Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Reques
 
 	uploadData, err := middlewares.UploadFilesData(r.Context())
 	if err != nil {
-		s.log.WithError(err).Error("failed to get upload session id")
+		c.log.WithError(err).Error("failed to get upload session id")
 		ape.RenderErr(w, problems.Unauthorized("failed to get upload session id"))
 
 		return
 	}
 
-	res, err := s.domain.UpdateProfile(
+	res, err := c.domain.UpdateProfile(
 		r.Context(),
 		initiator.AccountID,
 		profile.UpdateParams{
@@ -67,21 +67,15 @@ func (s Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Reques
 		},
 	)
 	if err != nil {
-		s.log.WithError(err).Errorf("failed to update profile")
+		c.log.WithError(err).Errorf("failed to update profile")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.Unauthorized("profile for user does not exist"))
-		case errors.Is(err, errx.ErrorProfileAvatarContentFormatIsNotAllowed):
+		case errors.Is(err, errx.ErrorProfileAvatarContentFormatIsNotAllowed),
+			errors.Is(err, errx.ErrorProfileAvatarTooLarge),
+			errors.Is(err, errx.ErrorProfileAvatarContentTypeIsNotAllowed):
 			ape.RenderErr(w, problems.BadRequest(validation.Errors{
-				"avatar": fmt.Errorf(errx.ErrorProfileAvatarContentFormatIsNotAllowed.Error()),
-			})...)
-		case errors.Is(err, errx.ErrorProfileAvatarTooLarge):
-			ape.RenderErr(w, problems.BadRequest(validation.Errors{
-				"avatar": fmt.Errorf(errx.ErrorProfileAvatarTooLarge.Error()),
-			})...)
-		case errors.Is(err, errx.ErrorProfileAvatarContentTypeIsNotAllowed):
-			ape.RenderErr(w, problems.BadRequest(validation.Errors{
-				"avatar": fmt.Errorf(errx.ErrorProfileAvatarContentTypeIsNotAllowed.Error()),
+				"avatar": fmt.Errorf(err.Error()),
 			})...)
 		default:
 			ape.RenderErr(w, problems.InternalError())

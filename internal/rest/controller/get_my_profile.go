@@ -11,18 +11,18 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Controller) GetMyProfile(w http.ResponseWriter, r *http.Request) {
+func (c Controller) GetMyProfile(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
-		s.log.WithError(err).Error("failed to get account from context")
+		c.log.WithError(err).Error("failed to get account from context")
 		ape.RenderErr(w, problems.Unauthorized("failed to get account from context"))
 
 		return
 	}
 
-	res, err := s.domain.GetProfileByAccountID(r.Context(), initiator.AccountID)
+	res, err := c.domain.GetProfileByAccountID(r.Context(), initiator.AccountID)
 	if err != nil {
-		s.log.WithError(err).Errorf("failed to get profile by user id")
+		c.log.WithError(err).Errorf("failed to get profile by user id")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.Unauthorized("profile for user does not exist"))

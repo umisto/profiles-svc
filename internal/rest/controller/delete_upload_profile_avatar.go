@@ -8,10 +8,10 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/middlewares"
 )
 
-func (s Controller) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Request) {
+func (c Controller) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Request) {
 	initiator, err := middlewares.AccountData(r.Context())
 	if err != nil {
-		s.log.WithError(err).Error("failed to get user from context")
+		c.log.WithError(err).Error("failed to get user from context")
 		ape.RenderErr(w, problems.Unauthorized("failed to get user from context"))
 
 		return
@@ -19,19 +19,19 @@ func (s Controller) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Req
 
 	uploadFilesData, err := middlewares.UploadFilesData(r.Context())
 	if err != nil {
-		s.log.WithError(err).Error("failed to get upload session id")
+		c.log.WithError(err).Error("failed to get upload session id")
 		ape.RenderErr(w, problems.Unauthorized("failed to get upload session id"))
 
 		return
 	}
 
-	err = s.domain.DeleteUploadProfileAvatarInSession(
+	err = c.domain.DeleteUploadProfileAvatarInSession(
 		r.Context(),
 		initiator.AccountID,
 		uploadFilesData.UploadSessionID,
 	)
 	if err != nil {
-		s.log.WithError(err).Errorf("failed to cancel update avatar")
+		c.log.WithError(err).Errorf("failed to cancel update avatar")
 		ape.RenderErr(w, problems.InternalError())
 
 		return

@@ -29,7 +29,7 @@ type Handlers interface {
 
 type Middlewares interface {
 	AccountAuth() func(http.Handler) http.Handler
-	AccountRolesGrant(allowedRoles map[string]bool) func(http.Handler) http.Handler
+	AccountRoleGrant(allowedRoles map[string]bool) func(http.Handler) http.Handler
 	UpdateOwnProfile() func(http.Handler) http.Handler
 }
 
@@ -61,7 +61,7 @@ type Config struct {
 
 func (s *Service) Run(ctx context.Context, cfg Config) {
 	auth := s.middlewares.AccountAuth()
-	sysmoder := s.middlewares.AccountRolesGrant(map[string]bool{
+	sysmoder := s.middlewares.AccountRoleGrant(map[string]bool{
 		roles.SystemAdmin: true,
 		roles.SystemModer: true,
 	})
@@ -93,8 +93,7 @@ func (s *Service) Run(ctx context.Context, cfg Config) {
 						r.Post("/", s.handlers.OenProfileUpdateSession)
 
 						r.With(updateOwnProfile).Put("/confirm", s.handlers.ConfirmUpdateMyProfile)
-
-						r.With(updateOwnProfile).Delete("/avatar", s.handlers.DeleteUploadProfileAvatar)
+						r.With(updateOwnProfile).Delete("/upload-avatar", s.handlers.DeleteUploadProfileAvatar)
 					})
 				})
 			})

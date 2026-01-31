@@ -38,7 +38,7 @@ func (p Provider) AccountAuth() func(next http.Handler) http.Handler {
 	return mdlv.AccountAuth(p.log, accountDataCtxKey, p.accountAccessSK)
 }
 
-func (p Provider) AccountRolesGrant(
+func (p Provider) AccountRoleGrant(
 	allowedRoles map[string]bool,
 ) func(http.Handler) http.Handler {
 	return mdlv.AccountRoleGrant(p.log, accountDataCtxKey, allowedRoles)

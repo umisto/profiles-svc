@@ -39,7 +39,10 @@ func (b Bucket) GetPreloadLinkForProfileMedia(
 	}, nil
 }
 
-func (b Bucket) AcceptUpdateProfileMedia(ctx context.Context, accountID, sessionID uuid.UUID) (string, error) {
+func (b Bucket) AcceptUpdateProfileMedia(
+	ctx context.Context,
+	accountID, sessionID uuid.UUID,
+) (string, error) {
 	tempKey := CreateTempProfileAvatarKey(accountID, sessionID)
 	finalKey := CreateProfileAvatarKey(accountID)
 
@@ -70,7 +73,7 @@ func (b Bucket) AcceptUpdateProfileMedia(ctx context.Context, accountID, session
 		)
 	}
 
-	valid, err = b.profileAvatarValidator.ValidateImage(probe)
+	valid, err = b.profileAvatarValidator.ValidateImageResolution(probe)
 	if err != nil {
 		return "", fmt.Errorf("failed to validate profile avatar image: %w", err)
 	}

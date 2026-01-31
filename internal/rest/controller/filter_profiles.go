@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/restkit/pagi"
 )
 
-func (s Controller) FilterProfiles(w http.ResponseWriter, r *http.Request) {
+func (c Controller) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	limit, offset := pagi.GetPagination(r)
 
@@ -25,9 +25,9 @@ func (s Controller) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 		filters.PseudonymPrefix = &pseudonym
 	}
 
-	res, err := s.domain.FilterProfile(r.Context(), filters, limit, offset)
+	res, err := c.domain.FilterProfile(r.Context(), filters, limit, offset)
 	if err != nil {
-		s.log.WithError(err).Error("failed to filter profiles")
+		c.log.WithError(err).Error("failed to filter profiles")
 		ape.RenderErr(w, problems.InternalError())
 		return
 	}

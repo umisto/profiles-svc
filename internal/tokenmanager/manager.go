@@ -1,6 +1,7 @@
 package tokenmanager
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -29,7 +30,7 @@ func (m Manager) NewUploadProfileMediaToken(
 	OwnerAccountID uuid.UUID,
 	UploadSessionID uuid.UUID,
 ) (string, error) {
-	return tokens.NewUploadFileToken(
+	tkn, err := tokens.NewUploadFileToken(
 		tokens.GenerateUploadFilesJwtRequest{
 			OwnerAccountID:  OwnerAccountID,
 			UploadSessionID: UploadSessionID,
@@ -38,5 +39,11 @@ func (m Manager) NewUploadProfileMediaToken(
 			Issuer:          ProfilesActor,
 			Audience:        []string{ProfilesActor},
 			Ttl:             m.profileMediaUploadTTL,
-		}, m.uploadSK)
+		}, m.uploadSK,
+	)
+	if err != nil {
+		return "", fmt.Errorf("failed to generate upload profile media token, cause: %w", err)
+	}
+
+	return tkn, nil
 }

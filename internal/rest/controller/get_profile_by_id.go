@@ -14,10 +14,10 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Controller) GetProfileByID(w http.ResponseWriter, r *http.Request) {
+func (c Controller) GetProfileByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.Parse(chi.URLParam(r, "account_id"))
 	if err != nil {
-		s.log.WithError(err).Errorf("invalid account id")
+		c.log.WithError(err).Errorf("invalid account id")
 		ape.RenderErr(w, problems.BadRequest(validation.Errors{
 			"query": fmt.Errorf("invalid account id: %s", chi.URLParam(r, "account_id")),
 		})...)
@@ -25,9 +25,9 @@ func (s Controller) GetProfileByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := s.domain.GetProfileByAccountID(r.Context(), userID)
+	res, err := c.domain.GetProfileByAccountID(r.Context(), userID)
 	if err != nil {
-		s.log.WithError(err).Errorf("failed to get profile by user id")
+		c.log.WithError(err).Errorf("failed to get profile by user id")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.NotFound("profile for user does not exist"))

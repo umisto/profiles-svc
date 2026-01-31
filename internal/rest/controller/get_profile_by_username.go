@@ -11,12 +11,12 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Controller) GetProfileByUsername(w http.ResponseWriter, r *http.Request) {
+func (c Controller) GetProfileByUsername(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 
-	res, err := s.domain.GetProfileByUsername(r.Context(), username)
+	res, err := c.domain.GetProfileByUsername(r.Context(), username)
 	if err != nil {
-		s.log.WithError(err).Errorf("failed to get profile by username")
+		c.log.WithError(err).Errorf("failed to get profile by username")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.NotFound("profile for user does not exist"))

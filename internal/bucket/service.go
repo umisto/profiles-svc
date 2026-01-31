@@ -20,14 +20,14 @@ type UploadTokensTTL struct {
 }
 
 type Config struct {
-	Storage                storage
+	S3                     storage
 	ProfileAvatarValidator ObjectValidator
 	UploadTokensTTL        UploadTokensTTL
 }
 
 func New(config Config) Bucket {
 	return Bucket{
-		s3:                     config.Storage,
+		s3:                     config.S3,
 		tokensTTL:              config.UploadTokensTTL,
 		profileAvatarValidator: config.ProfileAvatarValidator,
 	}
@@ -50,7 +50,7 @@ type storage interface {
 }
 
 type ObjectValidator interface {
-	ValidateImage(data []byte) (bool, error)
+	ValidateImageResolution(data []byte) (bool, error)
 	ValidateImageFormat(data []byte) (bool, error)
 	ValidateImageContentType(data []byte) (bool, error)
 	ValidateImageSize(size uint) (bool, error)

@@ -11,18 +11,18 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (s Controller) UpdateProfileOfficial(w http.ResponseWriter, r *http.Request) {
+func (c Controller) UpdateProfileOfficial(w http.ResponseWriter, r *http.Request) {
 	req, err := requests.UpdateProfileOfficial(r)
 	if err != nil {
-		s.log.WithError(err).Errorf("invalid update official request")
+		c.log.WithError(err).Errorf("invalid update official request")
 		ape.RenderErr(w, problems.BadRequest(err)...)
 
 		return
 	}
 
-	res, err := s.domain.UpdateProfileOfficial(r.Context(), req.Data.Id, req.Data.Attributes.Official)
+	res, err := c.domain.UpdateProfileOfficial(r.Context(), req.Data.Id, req.Data.Attributes.Official)
 	if err != nil {
-		s.log.WithError(err).Errorf("failed to update official status")
+		c.log.WithError(err).Errorf("failed to update official status")
 		switch {
 		case errors.Is(err, errx.ErrorProfileNotFound):
 			ape.RenderErr(w, problems.NotFound("profile for user does not exist"))
