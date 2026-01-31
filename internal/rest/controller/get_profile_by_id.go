@@ -13,7 +13,7 @@ import (
 	"github.com/netbill/restkit/problems"
 )
 
-func (c Controller) GetProfileByID(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetProfileByID(w http.ResponseWriter, r *http.Request) {
 	userID, err := uuid.Parse(chi.URLParam(r, "account_id"))
 	if err != nil {
 		c.log.WithError(err).Errorf("invalid account id")
@@ -24,7 +24,7 @@ func (c Controller) GetProfileByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := c.domain.GetProfileByAccountID(r.Context(), userID)
+	res, err := c.core.GetProfileByAccountID(r.Context(), userID)
 	if err != nil {
 		c.log.WithError(err).Errorf("failed to get profile by user id")
 		switch {

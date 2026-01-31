@@ -10,7 +10,7 @@ import (
 	"github.com/netbill/restkit/problems"
 )
 
-func (c Controller) GetMyProfile(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetMyProfile(w http.ResponseWriter, r *http.Request) {
 	initiator, err := contexter.AccountData(r.Context())
 	if err != nil {
 		c.log.WithError(err).Error("failed to get account from context")
@@ -19,7 +19,7 @@ func (c Controller) GetMyProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := c.domain.GetProfileByAccountID(r.Context(), initiator.GetAccountID())
+	res, err := c.core.GetProfileByAccountID(r.Context(), initiator.GetAccountID())
 	if err != nil {
 		c.log.WithError(err).Errorf("failed to get profile by user id")
 		switch {

@@ -15,7 +15,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/rest/responses"
 )
 
-func (c Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Request) {
 	initiator, err := contexter.AccountData(r.Context())
 	if err != nil {
 		c.log.WithError(err).Error("failed to get user from context")
@@ -53,7 +53,7 @@ func (c Controller) ConfirmUpdateMyProfile(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	res, err := c.domain.UpdateProfile(
+	res, err := c.core.UpdateProfile(
 		r.Context(),
 		initiator.GetAccountID(),
 		profile.UpdateParams{

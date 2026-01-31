@@ -5,7 +5,7 @@ CREATE TABLE profiles (
     official    BOOLEAN NOT NULL DEFAULT FALSE,
     pseudonym   VARCHAR(128),
     description VARCHAR(255),
-    avatar_url  TEXT,
+    avatar      TEXT,
 
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()

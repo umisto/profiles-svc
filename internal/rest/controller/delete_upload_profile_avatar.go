@@ -7,7 +7,7 @@ import (
 	"github.com/netbill/restkit/problems"
 )
 
-func (c Controller) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Request) {
 	initiator, err := contexter.AccountData(r.Context())
 	if err != nil {
 		c.log.WithError(err).Error("failed to get user from context")
@@ -24,7 +24,7 @@ func (c Controller) DeleteUploadProfileAvatar(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	err = c.domain.DeleteUploadProfileAvatarInSession(
+	err = c.core.DeleteUploadProfileAvatarInSession(
 		r.Context(),
 		initiator.GetAccountID(),
 		uploadFilesData.GetUploadSessionID(),

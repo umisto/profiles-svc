@@ -10,7 +10,7 @@ import (
 	"github.com/netbill/restkit/problems"
 )
 
-func (c Controller) OenProfileUpdateSession(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) OenProfileUpdateSession(w http.ResponseWriter, r *http.Request) {
 	initiator, err := contexter.AccountData(r.Context())
 	if err != nil {
 		c.log.WithError(err).Error("failed to get user from context")
@@ -19,7 +19,7 @@ func (c Controller) OenProfileUpdateSession(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	media, profile, err := c.domain.OpenProfileUpdateSession(
+	media, profile, err := c.core.OpenProfileUpdateSession(
 		r.Context(),
 		initiator.GetAccountID(),
 	)

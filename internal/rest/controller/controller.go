@@ -11,7 +11,7 @@ import (
 	"github.com/netbill/restkit/pagi"
 )
 
-type domain interface {
+type core interface {
 	FilterProfile(
 		ctx context.Context,
 		params profile.FilterParams,
@@ -43,13 +43,13 @@ type responser interface {
 type Controller struct {
 	log *logium.Logger
 
-	domain    domain
+	core      core
 	responser responser
 }
 
-func New(log *logium.Logger, profile domain, responser responser) Controller {
+func New(log *logium.Logger, profile core, responser responser) Controller {
 	return Controller{
-		domain:    profile,
+		core:      profile,
 		log:       log,
 		responser: responser,
 	}

@@ -10,7 +10,7 @@ import (
 	"github.com/netbill/restkit/problems"
 )
 
-func (c Controller) UpdateProfileOfficial(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) UpdateProfileOfficial(w http.ResponseWriter, r *http.Request) {
 	req, err := requests.UpdateProfileOfficial(r)
 	if err != nil {
 		c.log.WithError(err).Errorf("invalid update official request")
@@ -19,7 +19,7 @@ func (c Controller) UpdateProfileOfficial(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	res, err := c.domain.UpdateProfileOfficial(r.Context(), req.Data.Id, req.Data.Attributes.Official)
+	res, err := c.core.UpdateProfileOfficial(r.Context(), req.Data.Id, req.Data.Attributes.Official)
 	if err != nil {
 		c.log.WithError(err).Errorf("failed to update official status")
 		switch {

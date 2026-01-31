@@ -10,7 +10,7 @@ import (
 	"github.com/netbill/restkit/problems"
 )
 
-func (c Controller) FilterProfiles(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	limit, offset := pagi.GetPagination(r)
 
@@ -24,7 +24,7 @@ func (c Controller) FilterProfiles(w http.ResponseWriter, r *http.Request) {
 		filters.PseudonymPrefix = &pseudonym
 	}
 
-	res, err := c.domain.FilterProfile(r.Context(), filters, limit, offset)
+	res, err := c.core.FilterProfile(r.Context(), filters, limit, offset)
 	if err != nil {
 		c.log.WithError(err).Error("failed to filter profiles")
 		c.responser.RenderErr(w, problems.InternalError())

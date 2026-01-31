@@ -10,10 +10,10 @@ import (
 	"github.com/netbill/restkit/problems"
 )
 
-func (c Controller) GetProfileByUsername(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetProfileByUsername(w http.ResponseWriter, r *http.Request) {
 	username := chi.URLParam(r, "username")
 
-	res, err := c.domain.GetProfileByUsername(r.Context(), username)
+	res, err := c.core.GetProfileByUsername(r.Context(), username)
 	if err != nil {
 		c.log.WithError(err).Errorf("failed to get profile by username")
 		switch {
