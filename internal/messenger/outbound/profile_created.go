@@ -12,7 +12,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func (o Outbound) WriteProfileCreated(
+func (o *Outbound) WriteProfileCreated(
 	ctx context.Context,
 	profile models.Profile,
 ) error {

@@ -9,15 +9,15 @@ import (
 	"github.com/netbill/restkit/pagi"
 )
 
-type Service struct {
+type Module struct {
 	repo      repo
 	messanger messanger
 	token     token
 	bucket    bucket
 }
 
-func New(repo repo, messanger messanger, token token, bucket bucket) Service {
-	return Service{
+func New(repo repo, messanger messanger, token token, bucket bucket) *Module {
+	return &Module{
 		repo:      repo,
 		messanger: messanger,
 		token:     token,

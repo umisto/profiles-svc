@@ -47,8 +47,8 @@ type Controller struct {
 	responser responser
 }
 
-func New(log *logium.Logger, profile core, responser responser) Controller {
-	return Controller{
+func New(log *logium.Logger, responser responser, profile core) *Controller {
+	return &Controller{
 		core:      profile,
 		log:       log,
 		responser: responser,

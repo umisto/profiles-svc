@@ -20,14 +20,14 @@ const (
 	ProfileResource = "profile"
 )
 
-func New(uploadSK string, profileMediaUploadTTL time.Duration) Manager {
-	return Manager{
+func New(uploadSK string, profileMediaUploadTTL time.Duration) *Manager {
+	return &Manager{
 		uploadSK:              uploadSK,
 		profileMediaUploadTTL: profileMediaUploadTTL,
 	}
 }
 
-func (m Manager) NewUploadProfileMediaToken(
+func (m *Manager) NewUploadProfileMediaToken(
 	OwnerAccountID uuid.UUID,
 	UploadSessionID uuid.UUID,
 ) (string, error) {
@@ -42,7 +42,6 @@ func (m Manager) NewUploadProfileMediaToken(
 		ResourceID:      OwnerAccountID.String(),
 		Resource:        ProfileResource,
 	}.GenerateJWT(m.uploadSK)
-
 	if err != nil {
 		return "", fmt.Errorf("failed to generate upload profile media token, cause: %w", err)
 	}

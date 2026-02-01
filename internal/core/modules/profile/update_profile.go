@@ -9,17 +9,17 @@ import (
 	"github.com/netbill/profiles-svc/internal/core/models"
 )
 
-func (s Service) OpenProfileUpdateSession(
+func (m *Module) OpenProfileUpdateSession(
 	ctx context.Context,
 	accountID uuid.UUID,
 ) (models.UpdateProfileMedia, models.Profile, error) {
-	profile, err := s.GetProfileByAccountID(ctx, accountID)
+	profile, err := m.GetProfileByAccountID(ctx, accountID)
 	if err != nil {
 		return models.UpdateProfileMedia{}, models.Profile{}, err
 	}
 
 	uploadSessionID := uuid.New()
-	links, err := s.bucket.GetPreloadLinkForProfileMedia(
+	links, err := m.bucket.GetPreloadLinkForProfileMedia(
 		ctx,
 		accountID,
 		uploadSessionID,
@@ -28,7 +28,7 @@ func (s Service) OpenProfileUpdateSession(
 		return models.UpdateProfileMedia{}, models.Profile{}, err
 	}
 
-	uploadToken, err := s.token.NewUploadProfileMediaToken(accountID, uploadSessionID)
+	uploadToken, err := m.token.NewUploadProfileMediaToken(accountID, uploadSessionID)
 	if err != nil {
 		return models.UpdateProfileMedia{}, models.Profile{}, err
 	}
@@ -62,12 +62,12 @@ func (p UpdateParams) GetUpdatedAvatar() *string {
 	return p.Media.avatarKey
 }
 
-func (s Service) UpdateProfile(
+func (m *Module) UpdateProfile(
 	ctx context.Context,
 	accountID uuid.UUID,
 	params UpdateParams,
 ) (profile models.Profile, err error) {
-	profile, err = s.GetProfileByAccountID(ctx, accountID)
+	profile, err = m.GetProfileByAccountID(ctx, accountID)
 	if err != nil {
 		return models.Profile{}, err
 	}
@@ -75,7 +75,7 @@ func (s Service) UpdateProfile(
 	params.Media.avatarKey = profile.Avatar
 	switch params.Media.DeleteAvatar {
 	case true:
-		if err = s.bucket.DeleteProfileAvatar(
+		if err = m.bucket.DeleteProfileAvatar(
 			ctx,
 			accountID,
 		); err != nil {
@@ -84,7 +84,7 @@ func (s Service) UpdateProfile(
 
 		params.Media.avatarKey = nil
 	case false:
-		avatar, err := s.bucket.AcceptUpdateProfileMedia(
+		avatar, err := m.bucket.AcceptUpdateProfileMedia(
 			ctx,
 			accountID,
 			params.Media.UploadSessionID,
@@ -99,7 +99,7 @@ func (s Service) UpdateProfile(
 		}
 	}
 
-	err = s.bucket.CleanProfileMediaSession(
+	err = m.bucket.CleanProfileMediaSession(
 		ctx,
 		accountID,
 		params.Media.UploadSessionID,
@@ -108,13 +108,13 @@ func (s Service) UpdateProfile(
 		return models.Profile{}, err
 	}
 
-	if err = s.repo.Transaction(ctx, func(ctx context.Context) error {
-		profile, err = s.repo.UpdateProfile(ctx, accountID, params)
+	if err = m.repo.Transaction(ctx, func(ctx context.Context) error {
+		profile, err = m.repo.UpdateProfile(ctx, accountID, params)
 		if err != nil {
 			return err
 		}
 
-		err = s.messanger.WriteProfileUpdated(ctx, profile)
+		err = m.messanger.WriteProfileUpdated(ctx, profile)
 		if err != nil {
 			return err
 		}
@@ -127,11 +127,11 @@ func (s Service) UpdateProfile(
 	return profile, nil
 }
 
-func (s Service) DeleteUploadProfileAvatarInSession(
+func (m *Module) DeleteUploadProfileAvatarInSession(
 	ctx context.Context,
 	accountID, sessionID uuid.UUID,
 ) error {
-	err := s.bucket.CancelUpdateProfileAvatar(ctx, accountID, sessionID)
+	err := m.bucket.CancelUpdateProfileAvatar(ctx, accountID, sessionID)
 	if err != nil {
 		return err
 	}

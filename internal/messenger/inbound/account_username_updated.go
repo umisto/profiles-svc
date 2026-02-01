@@ -10,7 +10,7 @@ import (
 	"github.com/netbill/profiles-svc/internal/messenger/contracts"
 )
 
-func (i Inbound) AccountUsernameUpdated(
+func (i *Inbound) AccountUsernameUpdated(
 	ctx context.Context,
 	event inbox.Event,
 ) inbox.EventStatus {

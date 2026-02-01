@@ -86,11 +86,11 @@ func StartServices(ctx context.Context, cfg Config, log *logium.Logger, wg *sync
 	profileSvc := profile.New(repo, kafkaOutbound, tokenManager, s3Bucket)
 
 	responser := restkit.NewResponser()
-	ctrl := controller.New(log, profileSvc, responser)
-	mdll := middlewares.New(log, middlewares.Config{
+	ctrl := controller.New(log, responser, profileSvc)
+	mdll := middlewares.New(log, responser, middlewares.Config{
 		AccountAccessSK: cfg.Auth.Account.Token.Access.SecretKey,
 		UploadFilesSK:   cfg.S3.Upload.Token.SecretKey,
-	}, responser)
+	})
 	router := rest.New(log, mdll, ctrl)
 
 	msgx := messenger.New(log, db, cfg.Kafka.Brokers...)

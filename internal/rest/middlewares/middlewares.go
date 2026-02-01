@@ -31,10 +31,10 @@ type Config struct {
 
 func New(
 	log *logium.Logger,
-	cfg Config,
 	responser responser,
-) Provider {
-	return Provider{
+	cfg Config,
+) *Provider {
+	return &Provider{
 		accountAccessSK: cfg.AccountAccessSK,
 		uploadFilesSK:   cfg.UploadFilesSK,
 		log:             log,
@@ -42,7 +42,7 @@ func New(
 	}
 }
 
-func (p Provider) AccountAuth(
+func (p *Provider) AccountAuth(
 	allowedRoles ...string,
 ) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
@@ -67,7 +67,7 @@ func (p Provider) AccountAuth(
 	}
 }
 
-func (p Provider) UpdateOwnProfile() func(next http.Handler) http.Handler {
+func (p *Provider) UpdateOwnProfile() func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			initiator, err := contexter.AccountData(r.Context())

@@ -12,7 +12,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func (o Outbound) WriteProfileDeleted(
+func (o *Outbound) WriteProfileDeleted(
 	ctx context.Context,
 	accountID uuid.UUID,
 ) error {

@@ -9,14 +9,14 @@ type Repository struct {
 	Transactioner
 }
 
-func New(Transaction Transactioner, profileSql ProfilesQ) Repository {
-	return Repository{
+func New(Transaction Transactioner, profileSql ProfilesQ) *Repository {
+	return &Repository{
 		profileSql:    profileSql,
 		Transactioner: Transaction,
 	}
 }
 
-func (r Repository) profilesSqlQ() ProfilesQ {
+func (r *Repository) profilesSqlQ() ProfilesQ {
 	return r.profileSql.New()
 }
 

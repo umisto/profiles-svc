@@ -34,7 +34,7 @@ type Middlewares interface {
 	UpdateOwnProfile() func(next http.Handler) http.Handler
 }
 
-type Service struct {
+type Router struct {
 	handlers    Handlers
 	middlewares Middlewares
 	log         *logium.Logger
@@ -44,8 +44,8 @@ func New(
 	log *logium.Logger,
 	middlewares Middlewares,
 	handlers Handlers,
-) *Service {
-	return &Service{
+) *Router {
+	return &Router{
 		log:         log,
 		middlewares: middlewares,
 		handlers:    handlers,
@@ -60,10 +60,10 @@ type Config struct {
 	TimeoutIdle       time.Duration
 }
 
-func (s *Service) Run(ctx context.Context, cfg Config) {
-	auth := s.middlewares.AccountAuth()
-	sysmoder := s.middlewares.AccountAuth(tokens.RoleSystemAdmin, tokens.RoleSystemModer)
-	updateOwnProfile := s.middlewares.UpdateOwnProfile()
+func (rt *Router) Run(ctx context.Context, cfg Config) {
+	auth := rt.middlewares.AccountAuth()
+	sysmoder := rt.middlewares.AccountAuth(tokens.RoleSystemAdmin, tokens.RoleSystemModer)
+	updateOwnProfile := rt.middlewares.UpdateOwnProfile()
 
 	r := chi.NewRouter()
 
@@ -80,26 +80,26 @@ func (s *Service) Run(ctx context.Context, cfg Config) {
 	r.Route("/profiles-svc", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
 			r.Route("/profiles", func(r chi.Router) {
-				r.Get("/", s.handlers.FilterProfiles)
+				r.Get("/", rt.handlers.FilterProfiles)
 
-				r.Get("/u/{username}", s.handlers.GetProfileByUsername)
+				r.Get("/u/{username}", rt.handlers.GetProfileByUsername)
 
 				r.With(auth).Route("/me", func(r chi.Router) {
-					r.Get("/", s.handlers.GetMyProfile)
+					r.Get("/", rt.handlers.GetMyProfile)
 
 					r.Route("/update-session", func(r chi.Router) {
-						r.Post("/", s.handlers.OenProfileUpdateSession)
+						r.Post("/", rt.handlers.OenProfileUpdateSession)
 
-						r.With(updateOwnProfile).Put("/confirm", s.handlers.ConfirmUpdateMyProfile)
-						r.With(updateOwnProfile).Delete("/upload-avatar", s.handlers.DeleteUploadProfileAvatar)
+						r.With(updateOwnProfile).Put("/confirm", rt.handlers.ConfirmUpdateMyProfile)
+						r.With(updateOwnProfile).Delete("/upload-avatar", rt.handlers.DeleteUploadProfileAvatar)
 					})
 				})
 			})
 
 			r.Route("/{account_id}", func(r chi.Router) {
-				r.Get("/", s.handlers.GetProfileByID)
+				r.Get("/", rt.handlers.GetProfileByID)
 
-				r.With(sysmoder).Patch("/official", s.handlers.UpdateProfileOfficial)
+				r.With(sysmoder).Patch("/official", rt.handlers.UpdateProfileOfficial)
 			})
 		})
 	})
@@ -113,7 +113,7 @@ func (s *Service) Run(ctx context.Context, cfg Config) {
 		IdleTimeout:       cfg.TimeoutIdle,
 	}
 
-	s.log.Infof("starting REST service on %s", cfg.Port)
+	rt.log.Infof("starting REST service on %s", cfg.Port)
 
 	errCh := make(chan error, 1)
 	go func() {
@@ -126,18 +126,18 @@ func (s *Service) Run(ctx context.Context, cfg Config) {
 
 	select {
 	case <-ctx.Done():
-		s.log.Warnf("shutting down REST service...")
+		rt.log.Warnf("shutting down REST service...")
 	case err := <-errCh:
 		if err != nil {
-			s.log.Errorf("REST server error: %v", err)
+			rt.log.Errorf("REST server error: %v", err)
 		}
 	}
 
 	shCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(shCtx); err != nil {
-		s.log.Errorf("REST shutdown error: %v", err)
+		rt.log.Errorf("REST shutdown error: %v", err)
 	} else {
-		s.log.Warnf("REST server stopped")
+		rt.log.Warnf("REST server stopped")
 	}
 }

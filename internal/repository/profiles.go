@@ -68,7 +68,7 @@ type ProfilesQ interface {
 	Page(limit, offset uint) ProfilesQ
 }
 
-func (r Repository) InsertProfile(ctx context.Context, accountID uuid.UUID, username string) (models.Profile, error) {
+func (r *Repository) InsertProfile(ctx context.Context, accountID uuid.UUID, username string) (models.Profile, error) {
 	res, err := r.profilesSqlQ().Insert(ctx, ProfileRow{
 		AccountID: accountID,
 		Username:  username,
@@ -83,7 +83,7 @@ func (r Repository) InsertProfile(ctx context.Context, accountID uuid.UUID, user
 	return res.ToModel(), nil
 }
 
-func (r Repository) GetProfileByAccountID(ctx context.Context, accountID uuid.UUID) (models.Profile, error) {
+func (r *Repository) GetProfileByAccountID(ctx context.Context, accountID uuid.UUID) (models.Profile, error) {
 	row, err := r.profilesSqlQ().FilterAccountID(accountID).Get(ctx)
 	switch {
 	case err != nil:
@@ -99,7 +99,7 @@ func (r Repository) GetProfileByAccountID(ctx context.Context, accountID uuid.UU
 	return row.ToModel(), nil
 }
 
-func (r Repository) GetProfileByUsername(ctx context.Context, username string) (models.Profile, error) {
+func (r *Repository) GetProfileByUsername(ctx context.Context, username string) (models.Profile, error) {
 	row, err := r.profilesSqlQ().FilterUsername(username).Get(ctx)
 	switch {
 	case err != nil:
@@ -115,7 +115,7 @@ func (r Repository) GetProfileByUsername(ctx context.Context, username string) (
 	return row.ToModel(), nil
 }
 
-func (r Repository) UpdateProfile(
+func (r *Repository) UpdateProfile(
 	ctx context.Context,
 	accountID uuid.UUID,
 	input profile.UpdateParams,
@@ -141,7 +141,7 @@ func (r Repository) UpdateProfile(
 	return row.ToModel(), nil
 }
 
-func (r Repository) UpdateProfileUsername(
+func (r *Repository) UpdateProfileUsername(
 	ctx context.Context,
 	accountID uuid.UUID,
 	username string,
@@ -164,7 +164,7 @@ func (r Repository) UpdateProfileUsername(
 	return row.ToModel(), nil
 }
 
-func (r Repository) UpdateProfileOfficial(
+func (r *Repository) UpdateProfileOfficial(
 	ctx context.Context,
 	accountID uuid.UUID,
 	official bool,
@@ -187,7 +187,7 @@ func (r Repository) UpdateProfileOfficial(
 	return row.ToModel(), nil
 }
 
-func (r Repository) UpdateProfileAvatar(
+func (r *Repository) UpdateProfileAvatar(
 	ctx context.Context,
 	accountID uuid.UUID,
 	avatarURL string,
@@ -210,7 +210,7 @@ func (r Repository) UpdateProfileAvatar(
 	return row.ToModel(), nil
 }
 
-func (r Repository) DeleteProfileAvatar(
+func (r *Repository) DeleteProfileAvatar(
 	ctx context.Context,
 	accountID uuid.UUID,
 ) (models.Profile, error) {
@@ -232,7 +232,7 @@ func (r Repository) DeleteProfileAvatar(
 	return row.ToModel(), nil
 }
 
-func (r Repository) FilterProfilesByUsername(
+func (r *Repository) FilterProfilesByUsername(
 	ctx context.Context,
 	prefix string,
 	offset uint,
@@ -271,7 +271,7 @@ func (r Repository) FilterProfilesByUsername(
 	}, nil
 }
 
-func (r Repository) FilterProfiles(
+func (r *Repository) FilterProfiles(
 	ctx context.Context,
 	params profile.FilterParams,
 	limit, offset uint,
@@ -316,6 +316,6 @@ func (r Repository) FilterProfiles(
 	}, nil
 }
 
-func (r Repository) DeleteProfile(ctx context.Context, accountID uuid.UUID) error {
+func (r *Repository) DeleteProfile(ctx context.Context, accountID uuid.UUID) error {
 	return r.profilesSqlQ().FilterAccountID(accountID).Delete(ctx)
 }

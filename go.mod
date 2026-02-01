@@ -14,12 +14,12 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
-	github.com/netbill/ape v0.1.1
-	github.com/netbill/awsx v0.1.8
+	github.com/netbill/ape v0.1.3
+	github.com/netbill/awsx v0.1.9
 	github.com/netbill/evebox v0.5.2
 	github.com/netbill/logium v0.1.2
 	github.com/netbill/pgdbx v0.3.1
-	github.com/netbill/restkit v0.1.13
+	github.com/netbill/restkit v0.2.0
 	github.com/pkg/errors v0.9.1
 	github.com/rubenv/sql-migrate v1.8.0
 	github.com/segmentio/kafka-go v0.4.50
@@ -63,9 +63,3 @@ require (
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
 )
-
-replace github.com/netbill/awsx => /home/trpdjke/go/src/github.com/netbill/awsx
-
-replace github.com/netbill/ape => /home/trpdjke/go/src/github.com/netbill/ape
-
-replace github.com/netbill/restkit => /home/trpdjke/go/src/github.com/netbill/restkit

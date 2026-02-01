@@ -13,12 +13,12 @@ type FilterParams struct {
 	Verified        *bool
 }
 
-func (s Service) FilterProfile(
+func (m *Module) FilterProfile(
 	ctx context.Context,
 	params FilterParams,
 	limit, offset uint,
 ) (pagi.Page[[]models.Profile], error) {
-	collection, err := s.repo.FilterProfiles(ctx, params, limit, offset)
+	collection, err := m.repo.FilterProfiles(ctx, params, limit, offset)
 	if err != nil {
 		return pagi.Page[[]models.Profile]{}, err
 	}
